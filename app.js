@@ -4,10 +4,10 @@ const port = 4001
 app.use(express.json())
 const mongoose = require('mongoose');
 
-/*mongoose.connect('mongodb+srv://anns2000:anas123@cluster0.lyb7wo3.mongodb.net/GP')
-  .then(() => console.log('Connected!'));*/
-mongoose.connect('mongodb://0.0.0.0:27017/gptest')
+mongoose.connect('mongodb+srv://anns2000:anas123@cluster0.lyb7wo3.mongodb.net/GP')
   .then(() => console.log('Connected!'));
+/*mongoose.connect('mongodb://0.0.0.0:27017/gptest')
+  .then(() => console.log('Connected!'));*/
 
 
 app.use('/department',require('./routes/department.route'))
