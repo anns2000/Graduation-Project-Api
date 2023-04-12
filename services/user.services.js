@@ -1,51 +1,71 @@
 
 const userModel=require('../models/user.model');
 const createError = require('http-errors');
+const createError = require('cloudinary');
+
 var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+cloudinary.config({
+    cloud_name: "donwkw0ny",
+    api_key: "948569869913115",
+    api_secret: "YVQgJVnpcyBd0z2_OT_1RN2t7uI"
+  });
 
 
 module.exports.addUser=async(req,res,next)=>{
-
-    const{username,password,role,name,department}=req.body;
-   const add=await userModel.findOne({username})
-    if(add)
-    {
-        return next(createError(404,'this user already exists'))
-    }
-    else
-    {
-        bcrypt.hash(password, 4,async function(err, hash) {
-
-            await userModel.insertMany({name,password:hash,role,username,department});
-            user= await userModel.findOne({username});
-            res.status(201).json({
-              meg:"added successfully",
-              isError:false,
-              data:user
-            });
-        });
+    try {
+        const{username,password,role,name,department}=req.body;
+        const add=await userModel.findOne({username})
+         if(add)
+         {
+             return next(createError(201,'this user already exists'))
+         }
+         else
+         {
+             bcrypt.hash(password, 4,async function(err, hash) {
+     
+                 await userModel.insertMany({name,password:hash,role,username,department});
+                 user= await userModel.findOne({username});
+                 res.status(201).json({
+                   meg:"added successfully",
+                   isError:false,
+                   data:user
+                 });
+             });
+             
+     
+         
+     }
         
+    } catch (error) {
+        return next(createError(405,'server maintenance underway please try again later'))
 
-    
-}
+
+    }
+ 
 }
 module.exports.getAll=async(req,res,next)=>{
+    try {
+        const users=await userModel.find();
 
-    const users=await userModel.find();
+        if(users.length==0)
+        {
+            return next(createError(201,'there is no user in your system'))
+    
+        }
+        else
+        {
+            res.status(202).json({
+                meg:"success",
+                isError:false,
+                data:users
+              });
+        }
+    
+        
+    } catch (error) {
+        return next(createError(405,'there is no user in your system'))
 
-    if(users.length==0)
-    {
-        return next(createError(404,'there is no user in your system'))
-
-    }
-    else
-    {
-        res.status(202).json({
-            meg:"success",
-            isError:false,
-            data:users
-          });
     }
 
 }
@@ -122,6 +142,7 @@ module.exports.updateUser=async(req,res,next)=>{
 
     const{id,username,password,role,rate,
         department,totalTickets,rejectedTickets,name}=req.body
+      
         if(id.length<12)
         {
             while(id.length<12)
@@ -132,7 +153,15 @@ module.exports.updateUser=async(req,res,next)=>{
         const user=await userModel.findById(id);
         if(user)
         {
-           user=await userModel.findByIdAndUpdate(id,{username,password,role,rate,department,totalTickets,rejectedTickets,name});
+            if(req.file)
+            {
+             await cloudinary.v2.uploader.upload(req.file.path,async(error,out)=>{
+          
+               req.body.photo=out.secure_url;
+           })
+            }
+          
+           user=await userModel.findByIdAndUpdate(id,{username,password,role,rate,department,totalTickets,rejectedTickets,name,photo:req.body.photo});
             res.status(201).json({
                  meg:"success",
                   isError:false,
@@ -141,7 +170,7 @@ module.exports.updateUser=async(req,res,next)=>{
         }
         else
         {
-            return next(createError(404,'this user not found'))
+            return next(createError(201,'this user not found'))
 
         }
 
@@ -151,7 +180,7 @@ module.exports.signin=async(req,res,next)=>{
     const user=await userModel.findOne({username})
     if(!user)
     {
-        return next(createError(404,'user not found'))
+        return next(createError(201,'user not found'))
     }
     else
     {
@@ -170,7 +199,7 @@ module.exports.signin=async(req,res,next)=>{
             }
             else
             {
-               return next(createError(404,'wrong user or password'))
+               return next(createError(201,'wrong user or password'))
 
             }
         });                

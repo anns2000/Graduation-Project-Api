@@ -10,7 +10,7 @@ module.exports.addBuilding=async(req,res,next)=>{
 
     if(add)
     {
-        return next(createError(404,"this building already exists"));
+        return next(createError(201,"this building already exists"));
     }
     else
     {
