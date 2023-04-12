@@ -18,7 +18,7 @@ const timeTableSchema = momgoose.Schema({
             }
         }
     })
-    //ana mario yalaaaaaaaaa
+    //ana mario 
 
 
 module.exports = momgoose.model('timetable', timeTableSchema)
