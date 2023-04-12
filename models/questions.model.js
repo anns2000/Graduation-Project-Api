@@ -1,12 +1,11 @@
 const mongoose=require('mongoose')
 
-const buildingSchema=mongoose.Schema({
+const qAndAschema=mongoose.Schema({
 
 
-    name:String,
-    
-},
-{
+    question:String,
+    answer:String
+},{
     toJSON: {
         transform: function (doc, ret) {
             ret.id = ret._id.toString(),
@@ -16,4 +15,4 @@ const buildingSchema=mongoose.Schema({
     }
 },)
 
-module.exports=mongoose.model('building',buildingSchema)
+module.exports=mongoose.model('question',qAndAschema)

@@ -2,7 +2,7 @@
 const buildingModel=require('../models/building.model');
 
 
-module.exports.addBuilding=async(req,res)=>{
+module.exports.addBuilding=async(req,res,next)=>{
 
     const{name}=req.body;
 
@@ -10,11 +10,7 @@ module.exports.addBuilding=async(req,res)=>{
 
     if(add)
     {
-        res.status(404).json({
-            meg:"this building already exists ",
-            isError:true,
-            data:null
-          });
+        return next(createError(404,"this building already exists"));
     }
     else
     {
@@ -29,18 +25,14 @@ module.exports.addBuilding=async(req,res)=>{
     }
 }
 
-module.exports.getAll=async(req,res)=>{
+module.exports.getAll=async(req,res,next)=>{
 
 const building=await buildingModel.find()
 console.log(building);
 if(building.length==0)
 {
-    res.status(404).json({
-        meg:"there is no building at all",
-        isError:true,
-        data:null
-      });
 
+    return next(createError(404,"there is no building at all"));
 }
 else
 {
@@ -55,7 +47,7 @@ else
 
 
 }
-module.exports.deleteBuilding=async(req,res)=>{
+module.exports.deleteBuilding=async(req,res,next)=>{
 
     let{id}=req.body;
     if(id.length<12)
@@ -69,17 +61,15 @@ module.exports.deleteBuilding=async(req,res)=>{
     if(dele)
     {
         await buildingModel.findByIdAndRemove(id);
+        const builds= await buildingModel.find();
+
         res.status(201).json({
             meg:"deleted",
             isError:false,
-            data:null
+            data:builds
           });    }
     else
     {
-        res.status(404).json({
-            meg:"this building does not exists ",
-            isError:true,
-            data:null
-          });
+        return next(createError(404,"this building does not exists"));
     }
 }

@@ -1,8 +1,9 @@
 
 const departmentModel=require('../models/department.model');
+const createError = require('http-errors');
 
 
-module.exports.addDepartment=async(req,res)=>{
+module.exports.addDepartment=async(req,res,next)=>{
 
     const{name}=req.body;
 
@@ -10,11 +11,7 @@ module.exports.addDepartment=async(req,res)=>{
 
     if(add)
     {
-        res.status(404).json({
-            meg:"this department already exists",
-            isError:true,
-            data:null
-          });
+        return next(createError(404,"this department aready exisit"));
     }
     else
     {
@@ -29,7 +26,7 @@ module.exports.addDepartment=async(req,res)=>{
     }
 }
 
-module.exports.getAll=async(req,res)=>{
+module.exports.getAll=async(req,res,next)=>{
 
 const department=await departmentModel.find()
 
@@ -38,7 +35,7 @@ if(department.length==0)
     res.status(404).json({
         meg:"there is no department ",
         isError:true,
-        data:null
+        data:[]
       });
 
 }
@@ -55,7 +52,7 @@ else
 
 
 }
-module.exports.deleteDepartment=async(req,res)=>{
+module.exports.deleteDepartment=async(req,res,next)=>{
 
     const{id}=req.body;
     if(id.length<12)
@@ -71,17 +68,16 @@ module.exports.deleteDepartment=async(req,res)=>{
     if(dele)
     {
         await departmentModel.findByIdAndRemove(id);
+        const departs= await departmentModel.find();
+
         res.status(201).json({
             meg:"deleted",
             isError:false,
-            data:null
+            data:departs
           });    }
     else
     {
-        res.status(404).json({
-            meg:"this department does not exists ",
-            isError:true,
-            data:null
-          });
+
+        return next(createError(404,"this department does not exists"));
     }
 }

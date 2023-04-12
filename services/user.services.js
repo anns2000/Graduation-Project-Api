@@ -1,44 +1,43 @@
 
 const userModel=require('../models/user.model');
+const createError = require('http-errors');
+var jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 
-module.exports.addUser=async(req,res)=>{
+module.exports.addUser=async(req,res,next)=>{
 
     const{username,password,role,name,department}=req.body;
-    add=await userModel.findOne({username})
-    
+   const add=await userModel.findOne({username})
     if(add)
     {
-        res.status(404).json({
-            meg:"this user already exists ",
-            isError:true,
-            data:null
-          });
+        return next(createError(404,'this user already exists'))
     }
     else
     {
-        await userModel.insertMany({name,password,role,username,department});
-          user= await userModel.findOne({username});
-          res.status(201).json({
-            meg:"added successfully",
-            isError:false,
-            data:user
-          });
+        bcrypt.hash(password, 4,async function(err, hash) {
+
+            await userModel.insertMany({name,password:hash,role,username,department});
+            user= await userModel.findOne({username});
+            res.status(201).json({
+              meg:"added successfully",
+              isError:false,
+              data:user
+            });
+        });
+        
 
     
 }
 }
-module.exports.getAll=async(req,res)=>{
+module.exports.getAll=async(req,res,next)=>{
 
     const users=await userModel.find();
 
     if(users.length==0)
     {
-        res.status(404).json({
-            meg:"there is no user in your system",
-            isError:true,
-            data:null
-          });
+        return next(createError(404,'there is no user in your system'))
+
     }
     else
     {
@@ -50,17 +49,14 @@ module.exports.getAll=async(req,res)=>{
     }
 
 }
-module.exports.getAllClient=async(req,res)=>{
+module.exports.getAllClient=async(req,res,next)=>{
 
-    const users=await userModel.find({role:"Client"});
+    const users=await userModel.find({role:"client"});
 
     if(users.length==0)
     {
-        res.status(404).json({
-            meg:"there is no Client in your system",
-            isError:true,
-            data:null
-          });
+        return next(createError(207,'there is no client in your system'))
+
     }
     else
     {
@@ -72,17 +68,14 @@ module.exports.getAllClient=async(req,res)=>{
     }
 
 }
-module.exports.getAllStaff=async(req,res)=>{
+module.exports.getAllStaff=async(req,res,next)=>{
 
-    const users=await userModel.find({role:"Staff"});
+    const users=await userModel.find({role:"stuff"});
 
     if(users.length==0)
     {
-        res.status(404).json({
-            meg:"there is no Staff in your system",
-            isError:true,
-            data:null
-          });
+        return next(createError(404,'there is no stuff in your system'))
+
     }
     else
     {
@@ -94,9 +87,10 @@ module.exports.getAllStaff=async(req,res)=>{
     }
 
 }
-module.exports.deleteUser=async(req,res)=>{
+module.exports.deleteUser=async(req,res,next)=>{
 
     const{id}=req.body;
+    console.log(id)
     if(id.length<12)
     {
         while(id.length<12)
@@ -110,26 +104,75 @@ module.exports.deleteUser=async(req,res)=>{
     if(dele)
     {
         await userModel.findByIdAndRemove(id);
-        res.status(201).json({
+        res.status(202).json({
             meg:"deleted",
             isError:false,
-            data:null
+            data:[]
           
         });    
     }
     else
     {
-        res.status(404).json({
-            meg:"this user does not exists ",
-            isError:true,
-            data:null
-          });
+        return next(createError(404,'this user does not exists'))
+
     }    
    
 }
-module.exports.updateUser=async(req,res)=>{
+module.exports.updateUser=async(req,res,next)=>{
 
     const{id,username,password,role,rate,
         department,totalTickets,rejectedTickets,name}=req.body
+        if(id.length<12)
+        {
+            while(id.length<12)
+                {
+                    id+="0";
+                }
+        }
+        const user=await userModel.findById(id);
+        if(user)
+        {
+           user=await userModel.findByIdAndUpdate(id,{username,password,role,rate,department,totalTickets,rejectedTickets,name});
+            res.status(201).json({
+                 meg:"success",
+                  isError:false,
+                 data:user
+            })
+        }
+        else
+        {
+            return next(createError(404,'this user not found'))
 
+        }
+
+}
+module.exports.signin=async(req,res,next)=>{
+    const {username,password}=req.body
+    const user=await userModel.findOne({username})
+    if(!user)
+    {
+        return next(createError(404,'user not found'))
+    }
+    else
+    {
+        bcrypt.compare(password, user.password, async function(err, result) {
+          
+            
+            if(result)
+            {
+                var token = jwt.sign({ id:user._id,name:user.name,email:user.email,role:user.role }, 'anas');
+                res.status(202).json({
+                    meg:"success",
+                     isError:false,
+                     token:token,
+                    data:user
+               })
+            }
+            else
+            {
+               return next(createError(404,'wrong user or password'))
+
+            }
+        });                
+    }
 }

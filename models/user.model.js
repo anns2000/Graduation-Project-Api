@@ -4,6 +4,7 @@ const userSchema=mongoose.Schema({
 
 username:String,
 password:String,
+photo:String,
 role:String,
 rate:{
     type:Number,
@@ -22,6 +23,14 @@ rejectedTickets:{
     default:0
 },
 name:String,  
-})
+},{
+    toJSON: {
+        transform: function (doc, ret) {
+            ret.id = ret._id.toString(),
+                delete ret._id;
+                delete ret.__v;
+        }
+    }
+},)
 
 module.exports=mongoose.model('user',userSchema)

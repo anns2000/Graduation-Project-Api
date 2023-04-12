@@ -2,7 +2,7 @@ const { getAll, addBuilding, deleteBuilding, } = require('../services/building.s
 
 const Route=require('express').Router()
 
-
+//building 
 Route.post('/',addBuilding)
 Route.get('/',getAll)
 Route.delete('/',deleteBuilding)
