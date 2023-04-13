@@ -4,7 +4,6 @@ const port = process.env.port || 5001
 app.use(express.json())
 const mongoose = require('mongoose');
 const createError = require('http-errors');
-const morgan = require('morgan');
 
 mongoose.connect('mongodb+srv://anns2000:anas123@cluster0.lyb7wo3.mongodb.net/GP')
   .then(() => console.log('Connected!'));

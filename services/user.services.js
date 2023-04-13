@@ -1,7 +1,7 @@
 
 const userModel=require('../models/user.model');
 const createError = require('http-errors');
-const createError = require('cloudinary');
+const cloudinary = require('cloudinary');
 
 var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
