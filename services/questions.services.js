@@ -7,6 +7,7 @@ module.exports.addQuestion=async(req,res,next)=>{
 const {question , answer}= req.body
 
     await questionsModel.insertMany({question,answer});
+    
     questions= await questionsModel.find();
     res.status(201).json({
       meg:"added successfully",
@@ -23,7 +24,7 @@ module.exports.getAll=async(req,res,next)=>{
      if(questions)
      {
          res.status(201).json({
-           meg:"added successfully",
+           meg:"success",
            isError:false,
            data:questions
          });

@@ -94,7 +94,7 @@ module.exports.getAllStaff=async(req,res,next)=>{
 
     if(users.length==0)
     {
-        return next(createError(404,'there is no stuff in your system'))
+        return next(createError(201,'there is no stuff in your system'))
 
     }
     else
@@ -133,7 +133,7 @@ module.exports.deleteUser=async(req,res,next)=>{
     }
     else
     {
-        return next(createError(404,'this user does not exists'))
+        return next(createError(201,'this user does not exists'))
 
     }    
    
