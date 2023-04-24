@@ -6,7 +6,14 @@ const userSchema = mongoose.Schema({
     password: String,
     photo: String,
     role: String,
-    
+    isOnline:{
+        type: Boolean,
+        default: false
+    },
+    onTicket:{
+        type: Boolean,
+        default: false
+    },
     rate: {
         type: Number,
         default: 0
