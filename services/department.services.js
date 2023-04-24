@@ -1,6 +1,7 @@
 
 const departmentModel=require('../models/department.model');
 const createError = require('http-errors');
+const timeTableModel = require('../models/timeTable.model');
 
 
 module.exports.addDepartment=async(req,res,next)=>{
@@ -11,12 +12,13 @@ module.exports.addDepartment=async(req,res,next)=>{
 
     if(add)
     {
-        return next(createError(404,"this department aready exisit"));
+        return next(createError(201,"this department aready exisit"));
     }
     else
     {
         await departmentModel.insertMany({name});
-          department= await departmentModel.findOne({name});
+        const  department= await departmentModel.findOne({name});
+           await timeTableModel.updateMany({}, { $push: { priorityList: {departmentId:department.id,departmentName:department.name} } })
           res.status(201).json({
             meg:"added successfully",
             isError:false,
@@ -32,7 +34,7 @@ const department=await departmentModel.find()
 
 if(department.length==0)
 {
-    res.status(404).json({
+    res.status(201).json({
         meg:"there is no department ",
         isError:true,
         data:[]
@@ -78,6 +80,6 @@ module.exports.deleteDepartment=async(req,res,next)=>{
     else
     {
 
-        return next(createError(404,"this department does not exists"));
+        return next(createError(201,"this department does not exists"));
     }
 }

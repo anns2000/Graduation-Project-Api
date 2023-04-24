@@ -23,7 +23,6 @@ module.exports.addUser=async(req,res,next)=>{
          else
          {
              bcrypt.hash(password, 4,async function(err, hash) {
-     
                  await userModel.insertMany({name,password:hash,role,username,department});
                  user= await userModel.findOne({username});
                  res.status(201).json({
@@ -177,7 +176,7 @@ module.exports.updateUser=async(req,res,next)=>{
 }
 module.exports.signin=async(req,res,next)=>{
     const {username,password}=req.body
-    //anas
+    
     const user=await userModel.findOne({username})
     if(!user)
     {

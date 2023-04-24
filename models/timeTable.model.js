@@ -4,8 +4,8 @@ const timeTableSchema = momgoose.Schema({
 
         name: String,
         priorityList: [{
-            name: String,
-            id: String
+            departmentName: String,
+            departmentId: String
         }]
 
 
@@ -13,7 +13,7 @@ const timeTableSchema = momgoose.Schema({
         toJSON: {
             transform: function(doc, ret) {
                 ret.id = ret._id.toString(),
-                    delete ret._id;
+                delete ret._id;
                 delete ret.__v;
             }
         }
