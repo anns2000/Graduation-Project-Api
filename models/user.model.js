@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema({
     role: String,
     isOnline:{
         type: Boolean,
-        default: true
+        default: false
     },
     onTicket:{
         type: Boolean,
