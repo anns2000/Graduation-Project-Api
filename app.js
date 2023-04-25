@@ -19,7 +19,8 @@ app.use('/department', require('./routes/department.route'))
 app.use('/building', require('./routes/building.route'))
 app.use('/user', require('./routes/user.route'))
 app.use('/question', require('./routes/questions.route'))
-app.use('/ticket',require('./routes/tickets.route'))
+app.use('/ticket',require('./routes/tickets.route')) ///Auther Mario Ktkt 
+app.use('/OrderCompounent',require('./routes/orderCompounent.route')) ///Auther Mario Ktkt 
 
 app.get('/', async(req, res, next) => {
     res.send({ message: 'Awesome it works 🐻' });

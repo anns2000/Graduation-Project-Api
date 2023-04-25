@@ -1,3 +1,6 @@
+///Auther Mario Ktkt 
+
+
 const momgoose = require("mongoose");
 const ticket = momgoose.Schema(
   {
@@ -13,11 +16,6 @@ const ticket = momgoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: "user",
     },
-     //Date and Time when submit this Tickit
-    dateAndTime: {
-      type: Date,
-      default: Date.now,
-    },
     building:String,
   },
   { 
@@ -30,4 +28,4 @@ const ticket = momgoose.Schema(
     },
   }
 );
-module.exports = mongoose.model("ticket", ticket);
+module.exports = mongoose.model('ticket', ticket);
