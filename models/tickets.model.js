@@ -1,8 +1,9 @@
 ///Auther Mario Ktkt 
 
 
-const momgoose = require("mongoose");
-const ticket = momgoose.Schema(
+const mongoose = require("mongoose");
+
+const ticket = mongoose.Schema(
   {
     title: String,
     desc: String,

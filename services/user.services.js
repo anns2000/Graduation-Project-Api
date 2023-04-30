@@ -31,8 +31,8 @@ module.exports.addUser=async(req,res,next)=>{
 }
 }
 module.exports.getAll=async(req,res,next)=>{
-
-    const users=await userModel.find();
+    try{
+    const users=await ushjkerModel.find();
 
     if(users.length==0)
     {
@@ -47,7 +47,14 @@ module.exports.getAll=async(req,res,next)=>{
             data:users
           });
     }
-
+}catch(error){
+    res.status(404).json({
+        meg:"error",
+        isError:true,
+        data:{}
+      });
+    console.log(error);
+  }
 }
 module.exports.getAllClient=async(req,res,next)=>{
 

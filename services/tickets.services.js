@@ -6,6 +6,7 @@ const createError = require('http-errors');
 
 
 module.exports.submitTicket=async(req,res)=>{
+  try{
     const {title, desc, createdBy,building} = req.body;
     await ticketModel.insertMany({title,desc,createdBy,building});
     const ticketData = await ticketModel.findOne({title,desc,createdBy,building})
@@ -14,6 +15,9 @@ module.exports.submitTicket=async(req,res)=>{
         isError:false,
         data: ticketData
       });
+    }catch(error){
+      console.log(error);
+    }
 }
 
 module.exports.deleteTicket=async(req,res)=>{
@@ -35,26 +39,19 @@ module.exports.deleteTicket=async(req,res)=>{
 }
 
 
-module.exports.allTickets = async (req, res) => {
+module.exports.allTickets = async (req, res,next) => {
     let Ticket = await ticketModel.find({}).populate("createdBy", "title desc building");
     if(Ticket.length==0)
     {
-    res.status(404).json({
-        meg:"there is no tickets ",
-        isError:true,
-        data:[]
-      });
-
+      return next(createError(404,"There's no tickets"));
     }
     else
     {
-
     res.status(201).json({
         meg:"sucsess",
         isError:false,
         data:Ticket
       });
-
     }
 };
     

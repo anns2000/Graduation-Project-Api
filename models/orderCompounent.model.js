@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose')
 
-const orderCompounent = mongoose.schema({
+const orderCompounent = mongoose.Schema({
 compounent : String,
 ticketId: String,
 isSend: Boolean
