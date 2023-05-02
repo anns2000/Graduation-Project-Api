@@ -1,11 +1,11 @@
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
-
     username: String,
     password: String,
     photo: String,
     role: String,
+    // add count rate and sum rate
     rate: {
         type: Number,
         default: 0
@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema({
     },
     totalTickets: {
         type: Number,
-        default: 0
+       default: 0
     },
     rejectedTickets: {
         type: Number,

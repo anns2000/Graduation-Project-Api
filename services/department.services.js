@@ -71,7 +71,7 @@ module.exports.deleteDepartment=async(req,res,next)=>{
         const departs= await departmentModel.find();
 
         res.status(201).json({
-            meg:"deleted",
+            meg:"Deleted",
             isError:false,
             data:departs
           });    }

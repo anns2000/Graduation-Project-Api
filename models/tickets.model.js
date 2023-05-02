@@ -3,7 +3,7 @@
 
 const mongoose = require("mongoose");
 
-const ticket = mongoose.Schema(
+const ticketSchema = mongoose.Schema(
   {
     title: String,
     desc: String,
@@ -29,4 +29,4 @@ const ticket = mongoose.Schema(
     },
   }
 );
-module.exports = mongoose.model('ticket', ticket);
+module.exports = mongoose.model('ticket', ticketSchema);
