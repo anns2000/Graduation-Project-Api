@@ -13,6 +13,6 @@ const qAndAschema=mongoose.Schema({
                 delete ret.__v;
         }
     }
-},)
+})
 
 module.exports=mongoose.model('question',qAndAschema)

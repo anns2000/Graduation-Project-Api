@@ -7,8 +7,6 @@ const timeTableSchema = momgoose.Schema({
             departmentName: String,
             departmentId: String
         }]
-
-
     }, {
         toJSON: {
             transform: function(doc, ret) {
