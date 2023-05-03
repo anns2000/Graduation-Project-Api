@@ -32,7 +32,7 @@ console.log(building);
 if(building.length==0)
 {
 
-    return next(createError(404,"there is no building at all"));
+    return next(createError(201,"there is no building at all"));
 }
 else
 {
@@ -70,6 +70,6 @@ module.exports.deleteBuilding=async(req,res,next)=>{
           });    }
     else
     {
-        return next(createError(404,"this building does not exists"));
+        return next(createError(201,"this building does not exists"));
     }
 }

@@ -3,7 +3,22 @@ class PriorityQueue {
 		this.heap = [];
 	}
 
-	
+	searchAndRemove(item) {
+		const index = this.heap.findIndex(element => element === item);
+		if (index === -1) {
+		  return null;  // Item not found in queue
+		}
+		const deletedItem = this.heap[index];
+		this.heap[index] = this.heap[this.heap.length - 1];
+		this.heap.pop();
+		if (index === 0 || this.heap[index] > this.parent(index)) {
+		  this.heapifyDown(index);
+		} else {
+		  this.heapifyUp(index);
+		}
+		return deletedItem;
+	  }
+	  
 	getLeftChildIndex(parentIndex) {
 		return 2 * parentIndex + 1;
 	}
@@ -93,6 +108,8 @@ class PriorityQueue {
 		}
 	}
 }
+
+
 
 let ticketQueue = new PriorityQueue();
 let itQueue = new PriorityQueue();

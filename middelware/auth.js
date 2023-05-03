@@ -10,7 +10,7 @@ module.exports.auth=async(req,res,next)=>{
     jwt.verify(token, 'anas', async function(err, decoded) {
             if(err)
             {
-               return next(createError(404,'wrong token'))
+               return next(createError(201,'wrong token'))
 
             }
             else
@@ -21,7 +21,7 @@ module.exports.auth=async(req,res,next)=>{
                     }
                     else
                     {
-                           return next(createError(404,"you cant do that"));
+                           return next(createError(201,"you cant do that"));
 
                     }
 

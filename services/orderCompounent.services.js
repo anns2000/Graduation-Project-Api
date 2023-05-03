@@ -37,7 +37,7 @@ module.exports.getAllComp = async(req,res)=>{
     }
     else
     {
-        res.status(404).json({
+        res.status(201).json({
             meg:"there is no orders ",
             isError:true,
             data:[]

@@ -109,7 +109,7 @@ module.exports.getAllStaff=async(req,res,next)=>{
 module.exports.deleteUser=async(req,res,next)=>{
 
     const{id}=req.body;
-    console.log(id)
+    //console.log(id)
     if(id.length<12)
     {
         while(id.length<12)

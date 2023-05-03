@@ -30,7 +30,7 @@ module.exports.getAll=async(req,res,next)=>{
      }
      else
      {
-        return next(createError(404,"there is no questions at all"));
+        return next(createError(201,"there is no questions at all"));
      }
     }
     
@@ -59,7 +59,7 @@ module.exports.getAll=async(req,res,next)=>{
               });    }
         else
         {
-            return next(createError(404,"this question does not exists"));
+            return next(createError(201,"this question does not exists"));
         }
     }
 

@@ -34,7 +34,7 @@ module.exports.deleteTicket=async(req,res)=>{
           });    }
     else
     {
-        return next(createError(404,"Something Wrong!!!"));
+        return next(createError(201,"Something Wrong!!!"));
     }
 }
 
@@ -43,7 +43,7 @@ module.exports.allTickets = async (req, res,next) => {
     let Ticket = await ticketModel.find({}).populate("createdBy", "title desc building");
     if(Ticket.length==0)
     {
-      return next(createError(404,"There's no tickets"));
+      return next(createError(201,"There's no tickets"));
     }
     else
     {
@@ -64,7 +64,7 @@ module.exports.getUserTickets=async(req,res)=>{
     if(userTickets.length==0)
     {
 
-    res.status(404).json({
+    res.status(201).json({
         meg:"there is no tickets ",
         isError:true,
         data:[]
