@@ -7,8 +7,7 @@ module.exports.addQuestion=async(req,res,next)=>{
 const {question , answer}= req.body
 
     await questionsModel.insertMany({question,answer});
-    
-    questions= await questionsModel.find();
+    const questions= await questionsModel.find();
     res.status(201).json({
       meg:"added successfully",
       isError:false,

@@ -1,0 +1,84 @@
+const ticketModel = require('../models/tickets.model');
+const createError = require('http-errors');
+
+
+module.exports.submitTicket=async(req,res)=>{
+    const {title, desc, createdBy,building} = req.body;
+    await ticketModel.insertMany({title,desc,createdBy,building});
+    const ticketData = await ticketModel.findOne({title,desc,createdBy,building})
+    res.status(201).json({
+        meg:"Ticket Submited",
+        isError:false,
+        data: ticketData
+      });
+}
+
+module.exports.deleteTicket=async(req,res)=>{
+    
+    const dele=await ticketModel.findById(id);
+    if(dele)
+    {
+        await ticketModel.findByIdAndRemove(id);
+        const ticket= await ticketModel.find();
+        res.status(201).json({
+            meg:"deleted",
+            isError:false,
+            data:ticket
+          });    }
+    else
+    {
+        return next(createError(404,"Something Wrong!!!"));
+    }
+}
+
+
+module.exports.allTickets = async (req, res) => {
+    let Ticket = await ticketModel.find({}).populate("createdBy", "title desc building");
+    if(Ticket.length==0)
+    {
+    res.status(404).json({
+        meg:"there is no tickets ",
+        isError:true,
+        data:[]
+      });
+
+    }
+    else
+    {
+
+    res.status(201).json({
+        meg:"sucsess",
+        isError:false,
+        data:Ticket
+      });
+
+    }
+};
+    
+
+module.exports.getUserTickets=async(req,res)=>{
+    const createdBy = req.header("id");
+
+    let userTickets = await ticketModel.find({ createdBy });
+
+    if(userTickets.length==0)
+    {
+
+    res.status(404).json({
+        meg:"there is no tickets ",
+        isError:true,
+        data:[]
+      });
+
+    }
+    else
+    {
+
+    res.status(201).json({
+        meg:"sucsess",
+        isError:false,
+        data:userTickets
+      });
+
+    }
+    }
