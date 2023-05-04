@@ -37,7 +37,7 @@ module.exports.addUser=async(req,res,next)=>{
      }
         
     } catch (error) {
-        return next(createError(405,'server maintenance underway please try again later'))
+        return next(createError(405,'server maintenance now please try again later'))
 
 
     }
@@ -63,7 +63,7 @@ module.exports.getAll=async(req,res,next)=>{
     
         
     } catch (error) {
-        return next(createError(405,'there is no user in your system'))
+        return next(createError(405,'server maintenance now please try again later'))
 
     }
 

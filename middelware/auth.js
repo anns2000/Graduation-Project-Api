@@ -15,15 +15,8 @@ module.exports.auth=async(req,res,next)=>{
             }
             else
             {
-                    if(decoded.role==='admin')
-                    {
-                            next();
-                    }
-                    else
-                    {
-                           return next(createError(201,"you cant do that"));
-
-                    }
+                req.userId = decoded.id;
+                next();
 
             }
 

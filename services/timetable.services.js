@@ -21,6 +21,7 @@ module.exports.addTimeTable=async(req,res,next)=>{
   }
 }
 module.exports.getTimeTable=async(req,res,next)=>{
+  
 
   try {
     const timeTable=await timeTableModel.find();

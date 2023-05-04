@@ -1,14 +1,15 @@
 ///Auther Mario Ktkt 
 
 
-const { submitTicket, deleteTicket, allTickets, getUserTickets } = require('../services/tickets.services')
+const { auth } = require('../middelware/auth');
+const { submitTicket,  allTickets, getUserTickets, CancelTicket } = require('../services/tickets.services')
 
 const Route = require('express').Router()
 
-Route.post('/submitTicket',submitTicket);
-Route.delete('/deleteTicket',deleteTicket);
-Route.get('/allTickets',allTickets);
-Route.get('getUserTickets',getUserTickets);
+Route.post('/submitTicket',auth,submitTicket);
+Route.put('/deleteTicket',auth,CancelTicket);
+Route.get('/allTickets',auth,allTickets);
+Route.get('getUserTickets',auth,getUserTickets);
 
 
 module.exports = Route
