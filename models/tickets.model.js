@@ -7,6 +7,10 @@ const ticketSchema = mongoose.Schema(
   {
     title: String,
     desc: String,
+    inProgress: {
+      type: Boolean,
+      default: false
+    },
     createdBy: {
       //clint who submit ticket
       type: mongoose.SchemaTypes.ObjectId,
@@ -17,7 +21,11 @@ const ticketSchema = mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: "user",
     },
-    building:String,
+    building: {
+      //IT who work at this ticket
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "building",
+    },
   },
   { 
     timestamps:true,
