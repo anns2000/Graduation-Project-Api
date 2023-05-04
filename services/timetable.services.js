@@ -52,6 +52,6 @@ module.exports.deleteTimeTable=async(req,res,next)=>{
 
     
   } catch (error) {
-            return next(createError(405,'server maintenance underway please try again later'))
+            return next(createError(405,'server maintenance now please try again later'))
   }
 }
