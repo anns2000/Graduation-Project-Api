@@ -4,13 +4,12 @@ const { mongoose } = require('mongoose');
 const compounentModel = require('../models/orderCompounent.model');
 const createError = require('http-errors');
 
-module.exports.orderComp = async (req, res,next) => {
+module.exports.orderComp = async (req, res, next) => {
   try {
     const { compounent } = req.body;
     console.log(req.userId);
     const userId = new mongoose.Types.ObjectId(req.userId);
     const orderData = await compounentModel.insertMany({ compounent, userId });
-    console.log(orderData);
     res.status(201).json({
       meg: "Your Order Submited",
       isError: false,
@@ -22,14 +21,15 @@ module.exports.orderComp = async (req, res,next) => {
   }
 }
 
-module.exports.orderResponse = async (req, res,next) => {
+module.exports.orderResponse = async (req, res, next) => {
   try {
     const { id, isAccepted } = req.body;
-    const sendData = await compounentModel.findByIdAndUpdate({_id : id}, { isSend: true, isAccepted });
+    const sendData = await compounentModel.findByIdAndUpdate({ _id: id }, { isSend: true, isAccepted });
+    const data = await compounentModel.find({ _id: id });
     res.status(201).json({
       meg: "Compuonent Sent",
       isError: false,
-      data: sendData
+      data
     });
   } catch (error) {
     console.log(error);
@@ -37,9 +37,9 @@ module.exports.orderResponse = async (req, res,next) => {
   }
 }
 
-module.exports.getAllComp = async (req, res,next) => {
+module.exports.getAllComp = async (req, res, next) => {
   try {
-    let compounent = await compounentModel.find({isSend : false});
+    let compounent = await compounentModel.find({ isSend: false });
     if (compounent) {
       res.status(201).json({
         meg: "Sucsess",

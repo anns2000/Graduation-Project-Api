@@ -6,6 +6,7 @@ const userSchema = mongoose.Schema({
     phone: String,
     photo: String,
     role: String,
+    fcmToken: String,
     // add count rate and sum rate
     isOnline:{
         type: Boolean,
