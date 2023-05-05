@@ -21,7 +21,7 @@ module.exports.addUser=async(req,res,next)=>{
              return next(createError(201,'this user already exists'))
          }
          else
-         {
+         {Qa
              bcrypt.hash(password, 4,async function(err, hash) {
                  await userModel.insertMany({name,password:hash,role,username,department});
                  user= await userModel.findOne({username});
