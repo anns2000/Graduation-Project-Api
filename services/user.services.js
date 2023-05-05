@@ -14,7 +14,7 @@ cloudinary.config({
 
 module.exports.addUser=async(req,res,next)=>{
     try {
-        const{username,password,role,name,department}=req.body;
+        const{username,password,role,name,department,phone}=req.body;
         const add=await userModel.findOne({username})
          if(add)
          {
@@ -23,7 +23,7 @@ module.exports.addUser=async(req,res,next)=>{
          else
          {Qa
              bcrypt.hash(password, 4,async function(err, hash) {
-                 await userModel.insertMany({name,password:hash,role,username,department});
+                 await userModel.insertMany({name,password:hash,role,username,department,phone});
                  user= await userModel.findOne({username});
                  res.status(201).json({
                    meg:"added successfully",
@@ -140,7 +140,7 @@ module.exports.deleteUser=async(req,res,next)=>{
 module.exports.updateUser=async(req,res,next)=>{
 
     const{id,username,password,role,rate,
-        department,totalTickets,rejectedTickets,name}=req.body
+        department,totalTickets,rejectedTickets,name , phone}=req.body
       
         if(id.length<12)
         {
@@ -160,7 +160,7 @@ module.exports.updateUser=async(req,res,next)=>{
            })
             }
           
-           user=await userModel.findByIdAndUpdate(id,{username,password,role,rate,department,totalTickets,rejectedTickets,name,photo:req.body.photo});
+           user=await userModel.findByIdAndUpdate(id,{username,password,role,rate,department,totalTickets,rejectedTickets,name,photo:req.body.photo,phone});
             res.status(201).json({
                  meg:"success",
                   isError:false,
