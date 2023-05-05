@@ -4,53 +4,58 @@ const { mongoose } = require('mongoose');
 const compounentModel = require('../models/orderCompounent.model');
 const createError = require('http-errors');
 
-module.exports.orderComp = async (req, res) => {
+module.exports.orderComp = async (req, res, next) => {
   try {
     const { compounent } = req.body;
-    const userId = mongoose.Types.ObjectId(req.userId);
+    console.log(req.userId);
+    const userId = new mongoose.Types.ObjectId(req.userId);
     const orderData = await compounentModel.insertMany({ compounent, userId });
-    console.log(orderData);
     res.status(201).json({
       meg: "Your Order Submited",
       isError: false,
-      data: orderData
+      data: orderData[0]
     });
-  } catch (e) {
-    console.log(e);
-    res.status(201).json({
-      meg: e,
-      isError: true,
-      data: {},
-
-    });
+  } catch (error) {
+    console.log(error);
+    return next(createError(405, 'server maintenance now please try again later'));
   }
 }
 
-module.exports.sendComp = async (req, res) => {
-  const { compounent, isSend } = req.body;
-  await compounentModel.insertMany({ compounent, isSend });
-  const sendData = await compounentModel.findOne({ compounent, ticketId, isSend })
-  res.status(201).json({
-    meg: "Compuonent Sent",
-    isError: false,
-    data: sendData
-  });
-}
-
-module.exports.getAllComp = async (req, res) => {
-  let compounent = await compounentModel.find({}).populate("ticketId", "compounent isSend");
-  if (compounent) {
+module.exports.orderResponse = async (req, res, next) => {
+  try {
+    const { id, isAccepted } = req.body;
+    const sendData = await compounentModel.findByIdAndUpdate({ _id: id }, { isSend: true, isAccepted });
+    const data = await compounentModel.find({ _id: id });
     res.status(201).json({
-      meg: "sucsess",
+      meg: "Compuonent Sent",
       isError: false,
-      data: compounent
+      data
     });
+  } catch (error) {
+    console.log(error);
+    return next(createError(405, 'server maintenance now please try again later'));
   }
-  else {
-    res.status(201).json({
-      meg: "there is no orders ",
-      isError: true,
-      data: []
-    });
+}
+
+module.exports.getAllComp = async (req, res, next) => {
+  try {
+    let compounent = await compounentModel.find({ isSend: false });
+    if (compounent) {
+      res.status(201).json({
+        meg: "Sucsess",
+        isError: false,
+        data: compounent
+      });
+    }
+    else {
+      res.status(201).json({
+        meg: "there is no orders ",
+        isError: true,
+        data: []
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return next(createError(405, 'server maintenance now please try again later'));
   }
 }

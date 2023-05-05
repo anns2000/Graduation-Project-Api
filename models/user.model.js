@@ -3,8 +3,10 @@ const mongoose = require('mongoose')
 const userSchema = mongoose.Schema({
     username: String,
     password: String,
+    phone: String,
     photo: String,
     role: String,
+    fcmToken: String,
     // add count rate and sum rate
     isOnline:{
         type: Boolean,
