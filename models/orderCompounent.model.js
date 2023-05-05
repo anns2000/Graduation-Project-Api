@@ -12,6 +12,11 @@ const orderCompounent = mongoose.Schema({
         type: Boolean,
         default: false
     }
+    ,
+    isAccepted: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps:true,
     toJSON: {
