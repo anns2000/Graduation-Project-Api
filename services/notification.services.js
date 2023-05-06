@@ -1,24 +1,26 @@
 const createError = require('http-errors');
 const notificationModel = require('../models/notification.model');
+const userModel = require('../models/user.model');
 
 
 module.exports.updateFcmToken = async (req, res, next) => {
   try {
       const { fcmToken } = req.body;
-      const user = await userModel.findByIdAndUpdate({ _id: req.id }, { fcmToken });
+      const user = await userModel.findByIdAndUpdate({ _id: req.userId }, { fcmToken });
       res.status(201).json({
           meg: "Update Sucsess",
           isError: false,
           data: user
       });
   } catch (error) {
+    console.log(error);
       return next(createError(405, 'server maintenance now please try again later'));
   }
 }
 
 module.exports.getAllNotificationsById = async (req, res, next) => {
   try {
-    const userId = req.id;
+    const userId = req.userId;
     const notifications = await notificationModel.find(userId);
     await notificationModel.updateMany({},{isSeen : true});
     res.status(201).json({
