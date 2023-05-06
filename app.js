@@ -20,6 +20,7 @@ app.use('/question', require('./routes/questions.route'))
 app.use('/ticket',require('./routes/tickets.route')) ///Auther Mario Ktkt 
 app.use('/compounent',require('./routes/orderCompounent.route')) ///Auther Mario Ktkt 
 app.use('/timeTable', require('./routes/timeTable.route'))
+app.use('/notification', require('./routes/notification.route'))
 
 
 app.get('/', async(req, res, next) => {
@@ -27,6 +28,7 @@ app.get('/', async(req, res, next) => {
 });
 
 app.use((req, res, next) => {
+    console.log(req.body);
     next(createError(501, "this root not found"));
 });
 

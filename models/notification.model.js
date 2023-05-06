@@ -29,4 +29,4 @@ const notificationSchema = mongoose.Schema(
     },
   }
 );
-module.exports = mongoose.model('notification', ticketSchema);
+module.exports = mongoose.model('notification', notificationSchema);

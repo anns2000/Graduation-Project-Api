@@ -9,7 +9,7 @@ module.exports.orderComp = async (req, res, next) => {
     const { compounent } = req.body;
     console.log(req.userId);
     const userId = new mongoose.Types.ObjectId(req.userId);
-    const orderData = await compounentModel.insertMany({ compounent, userId });
+    const orderData = await compounentModel.insertMany({ compounent, user:userId });
     res.status(201).json({
       meg: "Your Order Submited",
       isError: false,
@@ -39,7 +39,7 @@ module.exports.orderResponse = async (req, res, next) => {
 
 module.exports.getAllComp = async (req, res, next) => {
   try {
-    let compounent = await compounentModel.find({ isSend: false });
+    let compounent = await compounentModel.find({ isSend: false }).populate('user', 'name photo');
     if (compounent) {
       res.status(201).json({
         meg: "Sucsess",

@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 
 const orderCompounent = mongoose.Schema({
     compounent: String,
-    userId: {
+    user: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'user'
     },

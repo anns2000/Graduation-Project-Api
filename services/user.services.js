@@ -63,6 +63,22 @@ module.exports.getAll = async (req, res, next) => {
     }
 
 }
+module.exports.getbyId = async (req, res, next) => {
+    const {id } = req.body;
+    const users = await userModel.find({ _id: id });
+
+    if (users.length == 0) {
+        return next(createError(207, 'There is no User in Your System'))
+    }
+    else {
+        res.status(202).json({
+            meg: "success",
+            isError: false,
+            data: users[0]
+        });
+    }
+
+}
 module.exports.getAllClient = async (req, res, next) => {
 
     const users = await userModel.find({ role: "client" });
