@@ -64,7 +64,7 @@ module.exports.getAll = async (req, res, next) => {
 
 }
 module.exports.getbyId = async (req, res, next) => {
-    const {id } = req.body;
+    const { id } = req.body;
     const users = await userModel.find({ _id: id });
 
     if (users.length == 0) {
@@ -143,23 +143,11 @@ module.exports.deleteUser = async (req, res, next) => {
 module.exports.updateUser = async (req, res, next) => {
 
     const { id, username, password, role, rate,
-        department, totalTickets, rejectedTickets, name, phone } = req.body
-
-    if (id.length < 12) {
-        while (id.length < 12) {
-            id += "0";
-        }
-    }
-    const user = await userModel.findById(id);
+        department, totalTickets, rejectedTickets, name, phone, photo } = req.bod
+    let user = await userModel.findById(id);
     if (user) {
-        if (req.file) {
-            await cloudinary.v2.uploader.upload(req.file.path, async (error, out) => {
-
-                req.body.photo = out.secure_url;
-            })
-        }
-
-        user = await userModel.findByIdAndUpdate(id, { username, password, role, rate, department, totalTickets, rejectedTickets, name, photo: req.body.photo, phone });
+        await userModel.findByIdAndUpdate(id, { username, password, role, rate, department, totalTickets, rejectedTickets, name, photo, phone });
+        user = await userModel.findById(id);
         res.status(201).json({
             meg: "success",
             isError: false,
@@ -167,7 +155,7 @@ module.exports.updateUser = async (req, res, next) => {
         })
     }
     else {
-        return next(createError(201, 'this user not found'))
+        return next(createError(201, 'This user not found'))
 
     }
 
