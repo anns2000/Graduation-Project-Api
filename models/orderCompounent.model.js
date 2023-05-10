@@ -1,4 +1,3 @@
-///Auther Mario Ktkt 
 
 const mongoose = require('mongoose')
 

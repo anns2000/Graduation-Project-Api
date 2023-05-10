@@ -6,11 +6,14 @@ let UserQueue = new Queue();
 
 module.exports.addTicket=(task)=>{
 
-    ticketQueue.add({task});
+     ticketQueue.add(task);
 }
 module.exports.cancelTicket=(id)=>{
 
-    ticketQueue.searchAndRemove(id);
+   return ticketQueue.searchAndRemove(id);
+}
+module.exports.print=()=>{
+   return ticketQueue.heap;
 }
 
 
