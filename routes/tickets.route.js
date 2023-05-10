@@ -7,7 +7,7 @@ const { submitTicket,  allTickets, getUserTickets, CancelTicket } = require('../
 const Route = require('express').Router()
 
 Route.post('/submitTicket',auth,submitTicket);
-Route.put('/deleteTicket',auth,CancelTicket);
+Route.put('/cancel',auth,CancelTicket);
 Route.get('/allTickets',auth,allTickets);
 Route.get('getUserTickets',auth,getUserTickets);
 
