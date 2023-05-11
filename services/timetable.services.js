@@ -40,18 +40,13 @@ module.exports.deleteTimeTable=async(req,res,next)=>{
 
   try {
     const {id}=req.body;
-
     await timeTableModel.findByIdAndRemove(id);
     const timeTable=await timeTableModel.find();
-
-
     res.status(201).json({
       meg:"deleted successfully",
       isError:false,
       data:timeTable
     });
-
-    
   } catch (error) {
             return next(createError(405,'server maintenance now please try again later'))
   }

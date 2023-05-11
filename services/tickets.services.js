@@ -82,7 +82,6 @@ module.exports.allTickets = async (req, res, next) => {
   } catch (error) {
     console.log(error.message)
     return next(createError(405, 'server maintenance now please try again later'))
-
   }
 
 };
@@ -103,7 +102,6 @@ module.exports.allInQueueTickets = async (req, res, next) => {
   } catch (error) {
     console.log(error.message)
     return next(createError(405, 'server maintenance now please try again later'))
-
   }
 
 };
