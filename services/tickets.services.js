@@ -1,4 +1,3 @@
-///Auther Mario Ktkt 
 
 const ticketModel = require('../models/tickets.model');
 const createError = require('http-errors');
@@ -70,7 +69,6 @@ module.exports.CancelTicket = async (req, res, next) => {
   }
 
 };
-
 module.exports.allTickets = async (req, res, next) => {
   try {
     let Ticket = await ticketModel.find({ status: { $in: ['inQueue', 'inProgress'] } }).populate("createdBy", "photo name department ");
@@ -107,6 +105,7 @@ module.exports.allInQueueTickets = async (req, res, next) => {
     }
 
   } catch (error) {
+    console.log(error.message)
     return next(createError(405, 'server maintenance now please try again later'))
 
   }
@@ -158,4 +157,19 @@ module.exports.getUserTickets = async (req, res, next) => {
   }
   
 }
+module.exports.getQueueTickets=async(req,res,next)=>{
+  try {
+    const arr=system.print()
 
+    res.status(201).json({
+      meg: "sucsess",
+      isError: false,
+      data  : arr,
+    });
+
+    
+  } catch (error) {
+        return next(createError(405,'server maintenance now please try again later'))
+
+  }
+}
