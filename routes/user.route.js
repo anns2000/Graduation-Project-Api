@@ -14,7 +14,7 @@ Route.delete('/',deleteUser)
 Route.get('/client',getAllClient)
 Route.get('/stuff',getAllStaff)
 Route.post('/login',signin)
-Route.put('/update',uploadSingleFile(),updateUser)
+Route.post('/update',uploadSingleFile(),updateUser)
 
 
 
