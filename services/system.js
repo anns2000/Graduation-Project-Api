@@ -13,7 +13,7 @@ module.exports.cancelTicket=(id)=>{
    return ticketQueue.searchAndRemove(id);
 }
 module.exports.print=()=>{
-   return ticketQueue.heap;
+   return ticketQueue.heap ?? [];
 }
 
 
