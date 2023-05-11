@@ -68,7 +68,7 @@ module.exports.CancelTicket = async (req, res, next) => {
 
 module.exports.allTickets = async (req, res, next) => {
   try {
-    let Ticket = await ticketModel.findMany({ status: { $in: ['inQueue', 'inProgress'] } }, { status }).populate("createdBy", "photo name department ");
+    let Ticket = await ticketModel.find({ status: { $in: ['inQueue', 'inProgress'] } }).populate("createdBy", "photo name department ");
     if (Ticket.length == 0) {
       return next(createError(201, "There's no tickets"));
     }
@@ -81,6 +81,8 @@ module.exports.allTickets = async (req, res, next) => {
     }
 
   } catch (error) {
+    console.log(error);
+
     return next(createError(405, 'server maintenance now please try again later'))
 
   }
@@ -88,7 +90,7 @@ module.exports.allTickets = async (req, res, next) => {
 };
 module.exports.allInQueueTickets = async (req, res, next) => {
   try {
-    let Ticket = await ticketModel.findMany({ status: 'inQueue' }, { status }).populate("createdBy", "photo name department ");
+    let Ticket = await ticketModel.find({ status: 'inQueue' }).populate("createdBy", "photo name department ");
     if (Ticket.length == 0) {
       return next(createError(201, "There's no tickets"));
     }
@@ -101,6 +103,7 @@ module.exports.allInQueueTickets = async (req, res, next) => {
     }
 
   } catch (error) {
+    console.log(error);
     return next(createError(405, 'server maintenance now please try again later'))
 
   }
@@ -108,7 +111,7 @@ module.exports.allInQueueTickets = async (req, res, next) => {
 };
 module.exports.allInProgressTickets = async (req, res, next) => {
   try {
-    let Ticket = await ticketModel.findMany({ status:'inProgress'}, { status }).populate("createdBy", "photo name department ");
+    let Ticket = await ticketModel.find({ status: 'inProgress' }).populate("createdBy", "photo name department ");
     if (Ticket.length == 0) {
       return next(createError(201, "There's no tickets"));
     }
