@@ -15,14 +15,10 @@ module.exports.submitTicket = async (req, res, next) => {
     const userId = req.userId;
 
     const ticketData = await ticketModel.insertMany({ title, desc, createdBy, buildingId, userId, ticketTime: new Date() });
-    
     let timeTable= await timeTableModel.findOne({isActive:true});
     const userDepartment =await userModel.findOne({_id:userId});
 
     const index = timeTable.priorityList.findIndex((element) => element.departmentName === userDepartment.department); 
-    
-
-    
       system.addTicket({
         id:ticketData[0].id,
         priority:index+1,
@@ -159,16 +155,52 @@ module.exports.getUserTickets = async (req, res, next) => {
 }
 module.exports.getQueueTickets=async(req,res,next)=>{
   try {
+    const myArray = [];
     const arr=system.print()
+    for(let i=0;i<arr.length;i++)
+    {
+      
+      let data=await ticketModel.find({_id:arr[i].id})
+      .select("title status desc building ")
+      .populate("createdBy","name , photo , department ");
+      myArray.push(data[0]);
+    }
 
     res.status(201).json({
       meg: "sucsess",
       isError: false,
-      data  : arr,
+      data  : myArray,
     });
 
     
   } catch (error) {
+    console.log(error.message)
+        return next(createError(405,'server maintenance now please try again later'))
+
+  }
+}
+module.exports.acceptTickets=async(req,res,next)=>{
+  try {
+    const {id}=req.body
+    const ticket=system.cancelTicket(id);
+    if(!ticket)
+    {
+      return next(createError(201, "This ticket id is wrong"));
+    }
+    await ticketModel.findByIdAndUpdate({_id:id},{status:"inProgress",ticketTime:new Date () });
+    const find= await ticketModel.find({_id:id});
+    res.status(201).json({
+      meg: "ticket accpeted",
+      isError: false,
+      data  : find,
+    });
+
+
+
+
+    
+  } catch (error) {
+    console.log(error.message)
         return next(createError(405,'server maintenance now please try again later'))
 
   }

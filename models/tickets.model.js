@@ -42,5 +42,5 @@ const ticketSchema = mongoose.Schema(
       },
     },
   }
-);
+)
 module.exports = mongoose.model('ticket', ticketSchema);
