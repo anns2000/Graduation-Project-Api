@@ -75,12 +75,13 @@ module.exports.openTimeTable=async(req,res,next)=>{
 module.exports.updateTimeTable=async(req,res,next)=>{
 
   try {
-    const {name , priorityList,id}= req.body
-    await timeTableModel.findOneAndUpdate({_id:id},{name:name,priorityList:priorityList})  
-    const time=await timeTableModel.find({_id:id})  ;
+    const {name , priorityList,id,isActive}= req.body
+    console.log(id);
+    await timeTableModel.findOneAndUpdate({_id:id},{name,priorityList,isActive})  
+    const time=await timeTableModel.find({_id:id});
 
     res.status(201).json({
-      meg:"added successfully",
+      meg:"updated",
       isError:false,
       data:time
     });

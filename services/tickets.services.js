@@ -11,10 +11,15 @@ const userModel = require('../models/user.model');
 
 module.exports.submitTicket = async (req, res, next) => {
   try {
-    const { title, desc, createdBy, buildingId } = req.body;
+    const { title, desc, buildingId } = req.body;
     const userId = req.userId;
-
-    const ticketData = await ticketModel.insertMany({ title, desc, createdBy, buildingId, userId, ticketTime: new Date() });
+    const oldTicket=await ticketModel.find({createdBy:userId,  status: { $in: ["inQueue", "inProgress"] }
+  });
+    if(oldTicket)
+    {
+      return next(new createError(201,"this user have inQueue or inProgress ticket"))
+    }
+    const ticketData = await ticketModel.insertMany({ title, desc, createdBy:userId, buildingId, userId, ticketTime: new Date() });
     let timeTable= await timeTableModel.findOne({isActive:true});
     const userDepartment =await userModel.findOne({_id:userId});
 
@@ -24,7 +29,6 @@ module.exports.submitTicket = async (req, res, next) => {
         priority:index+1,
       });
       const arr=system.print()
-      console.log(arr);
 
     res.status(201).json({
       meg: "Ticket Submited",
@@ -87,7 +91,7 @@ module.exports.allTickets = async (req, res, next) => {
 };
 module.exports.allInQueueTickets = async (req, res, next) => {
   try {
-    let Ticket = await ticketModel.findMany({ status: 'inQueue' }).populate("createdBy", "photo name department ");
+    let Ticket = await ticketModel.find({ status: 'inQueue' }).populate("createdBy", "photo name department ");
     if (Ticket.length == 0) {
       return next(createError(201, "There's no tickets"));
     }
@@ -107,7 +111,7 @@ module.exports.allInQueueTickets = async (req, res, next) => {
 };
 module.exports.allInProgressTickets = async (req, res, next) => {
   try {
-    let Ticket = await ticketModel.findMany({ status:'inProgress'}).populate("createdBy", "photo name department ");
+    let Ticket = await ticketModel.find({ status:'inProgress'}).populate("createdBy", "photo name department ");
     if (Ticket.length == 0) {
       return next(createError(201, "There's no tickets"));
     }
@@ -199,6 +203,25 @@ module.exports.acceptTickets=async(req,res,next)=>{
     
   } catch (error) {
     console.log(error.message)
+        return next(createError(405,'server maintenance now please try again later'))
+
+  }
+}
+module.exports.getCllintTicket=async(req,res,next)=>{
+  try {
+   userId=req.userId;
+    console.log(userId)
+   let data=await ticketModel.find({createdBy:userId,  status: { $in: ["inQueue", "inProgress"] }
+     }   )
+      .select("title status building ")
+      .populate("createdBy","name , department ").populate("workBy","name , department ");
+     //fix me data[0] wrong
+      res.status(201).json({
+        meg: "sucsess",
+        isError: false,
+        data  : data[0],
+      });
+  } catch (error) {
         return next(createError(405,'server maintenance now please try again later'))
 
   }
