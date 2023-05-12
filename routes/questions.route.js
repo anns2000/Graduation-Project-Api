@@ -2,7 +2,6 @@ const { addQuestion, getAll, deleteOne } = require('../services/questions.servic
 
 const Route=require('express').Router()
 
-//building 
 Route.post('/',addQuestion)
 Route.get('/',getAll)
 Route.delete('/',deleteOne)

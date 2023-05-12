@@ -2,7 +2,7 @@ const { addDepartment, getAll, deleteDepartment } = require('../services/departm
 
 const Route=require('express').Router()
 
-//department
+
 Route.post('/',addDepartment)
 Route.get('/',getAll)
 Route.delete('/',deleteDepartment)

@@ -3,7 +3,6 @@ const { addTimeTable, getTimeTable, deleteTimeTable, openTimeTable, updateTimeTa
 
 const Route=require('express').Router()
 
-//building 
 
 Route.post('/',auth,addTimeTable)
 Route.get('/',auth,getTimeTable)

@@ -6,7 +6,6 @@ const { uploadSingleFile } = require('../utils/fileUpload')
 
 const Route=require('express').Router()
 
-//user
 Route.post('/',addUser)
 Route.get('/',getAll)
 Route.delete('/',deleteUser)

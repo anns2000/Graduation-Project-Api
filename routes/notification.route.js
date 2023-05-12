@@ -1,4 +1,3 @@
-///Auther Mario Ktkt 
 
 
 const { auth } = require('../middelware/auth');

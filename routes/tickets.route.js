@@ -18,4 +18,7 @@ Route.get('/allInProgressTickets',auth,allInProgressTickets);
 Route.post('/acceptTicket',auth,acceptTickets);
 Route.get('/getCllintTicket',auth,getCllintTicket);
 
+
+
+
 module.exports = Route

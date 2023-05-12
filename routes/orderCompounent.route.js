@@ -1,4 +1,3 @@
-///Auther Mario Ktkt 
 
 const { auth } = require('../middelware/auth');
 const { orderComp, getAllComp, orderResponse } = require('../services/orderCompounent.services')
