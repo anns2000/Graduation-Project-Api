@@ -92,7 +92,7 @@ module.exports.allTickets = async (req, res, next) => {
 };
 module.exports.allInQueueTickets = async (req, res, next) => {
   try {
-    let Ticket = await ticketModel.findMany({ status: 'inQueue' }).populate("createdBy", "photo name department ");
+    let Ticket = await ticketModel.find({ status: 'inQueue' }).populate("createdBy", "photo name department ");
     if (Ticket.length == 0) {
       return next(createError(201, "There's no tickets"));
     }
@@ -113,7 +113,7 @@ module.exports.allInQueueTickets = async (req, res, next) => {
 };
 module.exports.allInProgressTickets = async (req, res, next) => {
   try {
-    let Ticket = await ticketModel.findMany({ status:'inProgress'}).populate("createdBy", "photo name department ");
+    let Ticket = await ticketModel.find({ status:'inProgress'}).populate("createdBy", "photo name department ");
     if (Ticket.length == 0) {
       return next(createError(201, "There's no tickets"));
     }
@@ -131,6 +131,7 @@ module.exports.allInProgressTickets = async (req, res, next) => {
   }
 
 };
+
 module.exports.getUserTickets = async (req, res, next) => {
   try {
     const createdBy = req.userId;
@@ -157,10 +158,11 @@ module.exports.getUserTickets = async (req, res, next) => {
   }
   
 }
+
 module.exports.getQueueTickets=async(req,res,next)=>{
   try {
-    const arr=system.print()
-
+    const arr = system.print()
+    
     res.status(201).json({
       meg: "sucsess",
       isError: false,
@@ -172,4 +174,22 @@ module.exports.getQueueTickets=async(req,res,next)=>{
         return next(createError(405,'server maintenance now please try again later'))
 
   }
+}
+
+module.exports.getTicketInfo= async(req,res,next)=>{
+  const {ticketId} = req.header;
+
+  try {
+  const info = await ticketModel.find(ticketId);
+    
+  res.status(201).json({
+    meg: "sucsess",
+    isError: false,
+    data  : info
+  });
+
+  }catch(error){
+    return next(createError(405,'this user has no ticket'))
+  }
+
 }

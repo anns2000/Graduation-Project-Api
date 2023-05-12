@@ -1,7 +1,9 @@
 
 
 const { auth } = require('../middelware/auth');
-const { submitTicket,  allTickets, getUserTickets, CancelTicket, getQueueTickets, allInQueueTickets, allInProgressTickets } = require('../services/tickets.services')
+const { submitTicket,  allTickets, getUserTickets, CancelTicket
+    , getQueueTickets, allInQueueTickets, allInProgressTickets
+    , getTicketInfo } = require('../services/tickets.services')
 
 const Route = require('express').Router()
 
@@ -12,6 +14,6 @@ Route.get('/getUserTickets',auth,getUserTickets);
 Route.get('/getQueueTickets',auth,getQueueTickets);
 Route.get('/allInQueueTickets',auth,allInQueueTickets);
 Route.get('/allInProgressTickets',auth,allInProgressTickets);
-
+Route.get('/getTicketInfo',getTicketInfo);
 
 module.exports = Route
