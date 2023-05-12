@@ -187,3 +187,27 @@ module.exports.signin = async (req, res, next) => {
         });
     }
 }
+
+module.exports.addrating = async (req, res, next) => {
+    const{rate} = req.body;
+    userId = req.userId
+
+    await userModel.findByIdAndUpdate({userId},{countRate:countRate+=rate})
+    userRate = await userModel.findById({userId},{rate}) 
+     res.status(202).json({
+        meg: "success",
+        isError: false,
+        data: user
+    })
+}
+
+module.exports.getUserRating = async(req,res,next)=>{
+    const{userId} = req.header;
+    const userRating = await userModel.findById({userId},{countRate});
+    
+    res.status(202).json({
+        meg: "your rating",
+        isError: false,
+        data: userRating
+    })
+}

@@ -1,3 +1,4 @@
+const { number } = require('joi');
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
@@ -11,6 +12,10 @@ const userSchema = mongoose.Schema({
     role: String,
     fcmToken: String,
     // add count rate and sum rate
+    countRate:{
+        type: Number,
+        default : 0
+    },
     isOnline: {
         type: Boolean,
         default: false

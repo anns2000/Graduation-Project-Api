@@ -129,6 +129,7 @@ module.exports.allInProgressTickets = async (req, res, next) => {
   }
 
 };
+
 module.exports.getUserTickets = async (req, res, next) => {
   try {
     const createdBy = req.userId;
@@ -155,6 +156,7 @@ module.exports.getUserTickets = async (req, res, next) => {
   }
   
 }
+
 module.exports.getQueueTickets=async(req,res,next)=>{
   try {
     const myArray = [];
@@ -225,4 +227,22 @@ module.exports.getCllintTicket=async(req,res,next)=>{
         return next(createError(405,'server maintenance now please try again later'))
 
   }
+}
+
+module.exports.getTicketInfo= async(req,res,next)=>{
+  const {ticketId} = req.header;
+
+  try {
+  const info = await ticketModel.find(ticketId);
+    
+  res.status(201).json({
+    meg: "sucsess",
+    isError: false,
+    data  : info
+  });
+
+  }catch(error){
+    return next(createError(405,'this user has no ticket'))
+  }
+
 }

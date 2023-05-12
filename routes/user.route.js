@@ -1,6 +1,6 @@
 const { auth } = require('../middelware/auth')
 const { addUser, getAll, deleteUser, 
-        getAllClient, getAllStaff,updateUser, signin, getbyId }
+        getAllClient, getAllStaff,updateUser, signin, getbyId, addrating }
          =require('../services/user.services')
 const { uploadSingleFile } = require('../utils/fileUpload')
 
@@ -18,6 +18,9 @@ Route.post('/login',signin)
 Route.post('/update',uploadSingleFile(),updateUser)
 
 
+Route.put('/update',uploadSingleFile(),updateUser)
+Route.put('/addRating',addrating)
+Route.get('/userRating')
 
 
 
