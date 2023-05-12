@@ -17,8 +17,6 @@ Route.get('/stuff',getAllStaff)
 Route.post('/login',signin)
 Route.post('/update',uploadSingleFile(),updateUser)
 
-
-Route.put('/update',uploadSingleFile(),updateUser)
 Route.put('/addRating',addrating)
 Route.get('/userRating')
 
