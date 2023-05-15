@@ -192,7 +192,7 @@ module.exports.addrating = async (req, res, next) => {
     const{rate} = req.body;
     userId = req.userId
 
-    await userModel.findByIdAndUpdate({userId},{countRate:countRate+=rate})
+    await userModel.findByIdAndUpdate({userId},{countRate:countRate+=1})
     userRate = await userModel.findById({userId},{rate}) 
      res.status(202).json({
         meg: "success",

@@ -13,8 +13,8 @@ module.exports.submitTicket = async (req, res, next) => {
   try {
     const { title, desc, buildingId } = req.body;
     const userId = req.userId;
-    const oldTicket=await ticketModel.find({createdBy:userId,  status: { $in: ["inQueue", "inProgress"] }
-  });
+    const oldTicket=await ticketModel.findOne({createdBy:userId,status: { $in: ["inQueue", "inProgress"] }});
+   
     if(oldTicket)
     {
       return next(new createError(201,"this user have inQueue or inProgress ticket"))
@@ -246,3 +246,32 @@ module.exports.getTicketInfo= async(req,res,next)=>{
   }
 
 }
+
+module.exports.closeTicket = async (req, res, next) => {
+  try {
+    const{id}=req.body
+    userId = req.userId
+    
+     await ticketModel.findByIdAndUpdate({ _id: id }, { status: "closed" })
+     const ret=  system.cancelTicket(id);
+    if(!ret)
+    {
+      return next(createError(201,"this ticket not in our system pls call the admin"));
+    }
+
+     console.log("ret=>",ret);
+      res.status(201).json({
+        meg: "canclled",
+        isError: false,
+        data: []
+      });
+    
+    
+
+  } catch (error) {
+    console.log(error.message);
+    return next(createError(405, 'server maintenance now please try again later'))
+
+  }
+
+};

@@ -10,6 +10,7 @@ const Route = require('express').Router()
 
 Route.post('/submitTicket',auth,submitTicket);
 Route.post('/cancel',auth,CancelTicket);
+//Route.post('/close',auth,closeTicket);
 Route.get('/allTickets',auth,allTickets);
 Route.get('/getUserTickets',auth,getUserTickets);
 Route.get('/getQueueTickets',auth,getQueueTickets);
