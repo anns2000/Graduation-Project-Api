@@ -15,6 +15,7 @@ module.exports.submitTicket = async (req, res, next) => {
     const userId = req.userId;
     const oldTicket=await ticketModel.findOne({createdBy:userId,status: { $in: ["inQueue", "inProgress"] }});
    
+    console.log(oldTicket);
     if(oldTicket)
     {
       return next(new createError(201,"this user have inQueue or inProgress ticket"))
