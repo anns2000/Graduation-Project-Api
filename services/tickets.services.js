@@ -234,10 +234,17 @@ module.exports.getCllintTicket=async(req,res,next)=>{
 
 module.exports.closeTicket = async (req, res, next) => {
   try {
-    userId = req.userId
     
-    const ret= await ticketModel.findByIdAndUpdate({ createdBy: id ,status:"in Progress"  }, { status: "closed" })
-    if(!ret)
+    userId = req.userId
+    const ticket= await ticketModel.findOne({ workBy: userId ,status:"in Progress"  });
+    console.log("ticket",ticket)
+    let ret=[];
+    if(ticket)
+    {
+      await ticketModel.findOneAndUpdate({ workBy: userId ,status:"in Progress"  },{status:"closed"});
+      ret= await ticketModel.findOne({_id:ticket._id})
+      }
+    else
     {
       return next(createError(201,"you donot have ticket to close"));
     }
@@ -245,12 +252,13 @@ module.exports.closeTicket = async (req, res, next) => {
       res.status(201).json({
         meg: "done",
         isError: false,
-        data: []
+        data: ret
       });
     
     
 
   } catch (error) {
+    console.log(error.message)
     return next(createError(405, 'server maintenance now please try again later'))
 
   }
