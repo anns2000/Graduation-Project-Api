@@ -31,6 +31,10 @@ const ticketSchema = mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: "building",
     },
+    usedCompounent:String,
+    problemDes:String,
+    complainDes:String,
+
   },
   { 
     timestamps:true,

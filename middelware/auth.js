@@ -12,6 +12,7 @@ module.exports.auth = async (req, res, next) => {
                 }
                 else {
                         req.userId = decoded.id;
+                        req.userName=decoded.name;
                         next();
                 }
 

@@ -4,6 +4,7 @@ const createError = require('http-errors');
 const system=require('./system');
 const timeTableModel = require('../models/timeTable.model');
 const userModel = require('../models/user.model');
+const complainModel=require('../models/complains.model');
 
 
 
@@ -165,10 +166,12 @@ module.exports.getQueueTickets=async(req,res,next)=>{
     for(let i=0;i<arr.length;i++)
     {
       
-      let data=await ticketModel.find({_id:arr[i].id})
+      let data=await ticketModel.findOne({_id:arr[i].id})
       .select("title status desc building ")
       .populate("createdBy","name , photo , department ");
-      myArray.push(data[0]);
+      data.priority=arr[i].priority;
+      
+      myArray.push(data);
     }
 
     res.status(201).json({
@@ -218,7 +221,7 @@ module.exports.getCllintTicket=async(req,res,next)=>{
   .select("title status building ticketTime createdBy workBy ")
   .populate("createdBy","name , department ")
   .populate("workBy"," name ");
-  console.log(data)
+  //console.log(data)
      //fix me data[0] wrong
       res.status(201).json({
         meg: "sucsess",
@@ -234,16 +237,35 @@ module.exports.getCllintTicket=async(req,res,next)=>{
 
 module.exports.closeTicket = async (req, res, next) => {
   try {
-    
+    const {usedCompounent,
+      problemDes,
+      complainDes} =req.body
     userId = req.userId
+    userName=req.userName
     const ticket= await ticketModel.findOne({ workBy: userId ,status:"in Progress"  });
-    console.log("ticket",ticket)
+   // console.log("ticket",ticket)
     let ret=[];
     if(ticket)
     {
-      await ticketModel.findOneAndUpdate({ workBy: userId ,status:"in Progress"  },{status:"closed"});
+      await ticketModel.findOneAndUpdate({ workBy: userId ,status:"in Progress"  },{status:"closed",usedCompounent,problemDes});
       ret= await ticketModel.findOne({_id:ticket._id})
+      if(complainDes.length>1)
+      {
+          const complain=await complainModel.findOne({ticketId:ticket._id});
+          if(complain)
+          {
+             await complainModel.findOneAndUpdate({ticketId:ticket._id},{stuffId:userId,stuffName:userName,complainDes:complainDes});
+             const com=await complainModel.findOne({ticketId:ticket._id});
+             //console.log("com1",com);
+          }
+          else
+          {
+            const com =await complainModel.insertMany({stuffId:userId,stuffName:userName,stuffDesc:complainDes});
+           // console.log("com2",com);
+          }
       }
+      
+    }
     else
     {
       return next(createError(201,"you donot have ticket to close"));
