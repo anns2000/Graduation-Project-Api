@@ -13,12 +13,12 @@ module.exports.submitTicket = async (req, res, next) => {
   try {
     const { title, desc, buildingId } = req.body;
     const userId = req.userId;
-    const oldTicket=await ticketModel.findOne({createdBy:userId,status: { $in: ["inQueue", "inProgress"] }});
+    const oldTicket=await ticketModel.findOne({createdBy:userId,status: { $in: ["in Queue", "in Progress"] }});
    
     //console.log(oldTicket);
     if(oldTicket)
     {
-      return next(new createError(201,"this user have inQueue or inProgress ticket"))
+      return next(new createError(201,"this user have in Queue or in Progress ticket"))
     }
     const ticketData = await ticketModel.insertMany({ title, desc, createdBy:userId, buildingId, userId, ticketTime: new Date() });
     let timeTable= await timeTableModel.findOne({isActive:true});
@@ -72,7 +72,7 @@ module.exports.CancelTicket = async (req, res, next) => {
 };
 module.exports.allTickets = async (req, res, next) => {
   try {
-    let Ticket = await ticketModel.find({ status: { $in: ['inQueue', 'inProgress'] } }).populate("createdBy", "photo name department ");
+    let Ticket = await ticketModel.find({ status: { $in: ['in Queue', 'in Progress'] } }).populate("createdBy", "photo name department ");
     if (Ticket.length == 0) {
       return next(createError(201, "There's no tickets"));
     }
@@ -90,9 +90,9 @@ module.exports.allTickets = async (req, res, next) => {
   }
 
 };
-module.exports.allInQueueTickets = async (req, res, next) => {
+module.exports.allinQueueTickets = async (req, res, next) => {
   try {
-    let Ticket = await ticketModel.find({ status: 'inQueue' }).populate("createdBy", "photo name department ");
+    let Ticket = await ticketModel.find({ status: 'in Queue' }).populate("createdBy", "photo name department ");
     if (Ticket.length == 0) {
       return next(createError(201, "There's no tickets"));
     }
@@ -112,7 +112,7 @@ module.exports.allInQueueTickets = async (req, res, next) => {
 };
 module.exports.allInProgressTickets = async (req, res, next) => {
   try {
-    let Ticket = await ticketModel.find({ status:'inProgress'}).populate("createdBy", "photo name department ");
+    let Ticket = await ticketModel.find({ status:'in Progress'}).populate("createdBy", "photo name department ");
     if (Ticket.length == 0) {
       return next(createError(201, "There's no tickets"));
     }
@@ -192,7 +192,7 @@ module.exports.acceptTickets=async(req,res,next)=>{
     {
       return next(createError(201, "This ticket id is wrong"));
     }
-    await ticketModel.findByIdAndUpdate({_id:id},{status:"inProgress",ticketTime:new Date () });
+    await ticketModel.findByIdAndUpdate({_id:id},{status:"in Progress",ticketTime:new Date (),workBy :req.userId });
     const find= await ticketModel.find({_id:id});
     res.status(201).json({
       meg: "ticket accpeted",
@@ -213,11 +213,12 @@ module.exports.acceptTickets=async(req,res,next)=>{
 module.exports.getCllintTicket=async(req,res,next)=>{
   try {
    userId=req.userId;
-    console.log(userId)
-   let data=await ticketModel.find({createdBy:userId,  status: { $in: ["inQueue", "inProgress"] }
-     }   )
-      .select("title status building ")
-      .populate("createdBy","name , department ").populate("workBy","name , department ");
+   let data=await ticketModel.find({createdBy:userId,  status: { $in: ["in Queue", "in Progress"] }
+  }   )
+  .select("title status building ticketTime createdBy workBy ")
+  .populate("createdBy","name , department ")
+  .populate("workBy"," name ");
+  console.log(data)
      //fix me data[0] wrong
       res.status(201).json({
         meg: "sucsess",
@@ -230,39 +231,19 @@ module.exports.getCllintTicket=async(req,res,next)=>{
   }
 }
 
-module.exports.getTicketInfo= async(req,res,next)=>{
-  const {ticketId} = req.header;
-
-  try {
-  const info = await ticketModel.find(ticketId);
-    
-  res.status(201).json({
-    meg: "sucsess",
-    isError: false,
-    data  : info
-  });
-
-  }catch(error){
-    return next(createError(405,'this user has no ticket'))
-  }
-
-}
 
 module.exports.closeTicket = async (req, res, next) => {
   try {
-    const{id}=req.body
     userId = req.userId
     
-     await ticketModel.findByIdAndUpdate({ _id: id }, { status: "closed" })
-     const ret=  system.cancelTicket(id);
+    const ret= await ticketModel.findByIdAndUpdate({ createdBy: id ,status:"in Progress"  }, { status: "closed" })
     if(!ret)
     {
-      return next(createError(201,"this ticket not in our system pls call the admin"));
+      return next(createError(201,"you donot have ticket to close"));
     }
 
-     console.log("ret=>",ret);
       res.status(201).json({
-        meg: "canclled",
+        meg: "done",
         isError: false,
         data: []
       });
@@ -270,7 +251,6 @@ module.exports.closeTicket = async (req, res, next) => {
     
 
   } catch (error) {
-    console.log(error.message);
     return next(createError(405, 'server maintenance now please try again later'))
 
   }

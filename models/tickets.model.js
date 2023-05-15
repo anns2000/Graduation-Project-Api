@@ -9,7 +9,7 @@ const ticketSchema = mongoose.Schema(
     desc: String,
     status:{
       type : String,
-      default: "inQueue"
+      default: "in Queue"
     },
     ticketTime:Date,
     inProgress: {
