@@ -144,7 +144,7 @@ module.exports.updateUser = async (req, res, next) => {
     const {  oldPassword,
         newPassword,name, phone ,photo } = req.body
 
-        console.log(oldPassword);
+        //console.log(oldPassword);
         const user = await userModel.findOne({ _id:req.userId });
         bcrypt.compare(oldPassword, user.password, async function (err, result) {
 
@@ -152,8 +152,11 @@ module.exports.updateUser = async (req, res, next) => {
 
                 bcrypt.hash(newPassword, 4, async function (err, hash) {
                    
-                   await userModel.findOneAndUpdate({_id:user._id},{password:hash,name:name,phone:phone,photo:photo})
-                  const ret=await userModel.findOneAndUpdate({id:user.id})
+                   await userModel.findOneAndUpdate({_id:user.id},{password:hash,name:name,phone:phone,photo:photo})
+                   const ret=await userModel.findOne({id:user.id})
+                   console.log(ret)
+                   console.log(ret.photo)
+
 
                    res.status(201).json({
                         meg: "updated successfully",
