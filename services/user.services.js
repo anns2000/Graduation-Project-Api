@@ -141,23 +141,39 @@ module.exports.deleteUser = async (req, res, next) => {
 
 }
 module.exports.updateUser = async (req, res, next) => {
+    const {  oldPassword,
+        newPassword,name, phone ,photo } = req.body
 
-    const { id, username, password, role, rate,
-        department, totalTickets, rejectedTickets, name, phone, photo } = req.bod
-    let user = await userModel.findById(id);
-    if (user) {
-        await userModel.findByIdAndUpdate(id, { username, password, role, rate, department, totalTickets, rejectedTickets, name, photo, phone });
-        user = await userModel.findById(id);
-        res.status(201).json({
-            meg: "success",
-            isError: false,
-            data: user
-        })
-    }
-    else {
-        return next(createError(201, 'This user not found'))
+        console.log(oldPassword);
+        const user = await userModel.findOne({ _id:req.userId });
+        bcrypt.compare(oldPassword, user.password, async function (err, result) {
 
-    }
+            if (result) {
+
+                bcrypt.hash(newPassword, 4, async function (err, hash) {
+                   
+                   await userModel.findOneAndUpdate({_id:user._id},{password:hash,name:name,phone:phone,photo:photo})
+                  const ret=await userModel.findOneAndUpdate({id:user.id})
+
+                   res.status(201).json({
+                        meg: "updated successfully",
+                        isError: false,
+                        data: ret
+                    });
+                });                
+            }
+            else {
+                return next(createError(201, 'wrong password'))
+
+            }
+        });
+        
+       
+      
+    
+
+
+    
 
 }
 module.exports.signin = async (req, res, next) => {

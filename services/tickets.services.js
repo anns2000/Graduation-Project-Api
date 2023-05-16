@@ -169,6 +169,7 @@ module.exports.getQueueTickets=async(req,res,next)=>{
       let data=await ticketModel.findOne({_id:arr[i].id})
       .select("title status desc building ")
       .populate("createdBy","name , photo , department ");
+      console.log(data)
       data.priority=arr[i].priority;
       
       myArray.push(data);

@@ -14,7 +14,7 @@ Route.get('/getbyId',getbyId)
 Route.get('/client',getAllClient)
 Route.get('/stuff',getAllStaff)
 Route.post('/login',signin)
-Route.post('/update',uploadSingleFile(),updateUser)
+Route.post('/update',auth,updateUser)
 
 Route.put('/addRating',addrating)
 Route.get('/userRating')
