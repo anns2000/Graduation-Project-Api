@@ -5,6 +5,7 @@ const cloudinary = require('cloudinary');
 
 var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const complainsModel = require('../models/complains.model');
 cloudinary.config({
     cloud_name: "donwkw0ny",
     api_key: "948569869913115",
@@ -34,6 +35,7 @@ module.exports.addUser = async (req, res, next) => {
         }
 
     } catch (error) {
+        console.log(error.message);
         return next(createError(405, 'server maintenance now please try again later'))
 
 
@@ -58,12 +60,15 @@ module.exports.getAll = async (req, res, next) => {
 
 
     } catch (error) {
+        console.log(error.message);
+
         return next(createError(405, 'server maintenance now please try again later'))
 
     }
 
 }
 module.exports.getbyId = async (req, res, next) => {
+    try {
     const { id } = req.body;
     const users = await userModel.find({ _id: id });
 
@@ -78,6 +83,11 @@ module.exports.getbyId = async (req, res, next) => {
         });
     }
 
+        
+    } catch (error) {
+        console.log(error.message);
+        return next(createError(405, 'server maintenance now please try again later'))
+    }
 }
 module.exports.getAllClient = async (req, res, next) => {
 
@@ -208,12 +218,38 @@ module.exports.signin = async (req, res, next) => {
 }
 
 module.exports.addrating = async (req, res, next) => {
-    const{rate} = req.body;
-    userId = req.userId
 
-    await userModel.findByIdAndUpdate({userId},{countRate:countRate+=1})
-    userRate = await userModel.findById({userId},{rate}) 
-     res.status(202).json({
+    const{rate ,complainDes , ticketId} = req.body;
+    userId = req.userId
+    userName= req.userName
+    
+
+    let user=await userModel.findOne({_id:userId});
+    console.log(user);
+    let newRate=user.rate+rate;
+    let newCount=user.countRate+1;
+    console.log(newCount,newRate);
+    await userModel.findOneAndUpdate({_id:userId},{rate:newRate,countRate:newCount});
+     user=await userModel.findOne({_id:userId});
+    
+      if(complainDes.length>1)
+      {
+          const complain=await complainsModel.findOne({ticketId:ticketId});
+          if(complain)
+          {
+             await complainsModel.findOneAndUpdate({ticketId:ticketId},{clientId:userId,clientName:userName,clientDesc:complainDes});
+             const com1=await complainsModel.findOne({ticketId:ticketId});
+                //console.log(com1);
+            }
+          else
+          {
+            const com2 =await complainsModel.insertMany({clientId:userId,clientName:userName,clientDesc:complainDes});
+          //  console.log(com2);
+        }
+      }
+
+  
+    res.status(202).json({
         meg: "success",
         isError: false,
         data: user

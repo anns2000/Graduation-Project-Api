@@ -69,21 +69,17 @@ module.exports.CancelTicket = async (req, res, next) => {
     return next(createError(405, 'server maintenance now please try again later'))
 
   }
-
 };
 module.exports.allTickets = async (req, res, next) => {
   try {
     let Ticket = await ticketModel.find({ status: { $in: ['in Queue', 'in Progress'] } }).populate("createdBy", "photo name department ");
-    if (Ticket.length == 0) {
-      return next(createError(201, "There's no tickets"));
-    }
-    else {
+    
       res.status(201).json({
         meg: "sucsess",
         isError: false,
-        data: Ticket
+        data: Ticket??[]
       });
-    }
+    
 
   } catch (error) {
     console.log(error.message)
@@ -255,14 +251,14 @@ module.exports.closeTicket = async (req, res, next) => {
           const complain=await complainModel.findOne({ticketId:ticket._id});
           if(complain)
           {
-             await complainModel.findOneAndUpdate({ticketId:ticket._id},{stuffId:userId,stuffName:userName,complainDes:complainDes});
+             await complainModel.findOneAndUpdate({ticketId:ticket._id},{stuffId:userId,stuffName:userName,stuffDesc:complainDes});
              const com=await complainModel.findOne({ticketId:ticket._id});
-             //console.log("com1",com);
+             
           }
           else
           {
-            const com =await complainModel.insertMany({stuffId:userId,stuffName:userName,stuffDesc:complainDes});
-           // console.log("com2",com);
+            const com =await complainModel.insertMany({stuffId:userId,stuffName:userName,stuffDesc:complainDes,ticketId:ticket._id});
+           // console.log(com,ticket._id);
           }
       }
       

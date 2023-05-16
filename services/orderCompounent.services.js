@@ -55,7 +55,7 @@ module.exports.getAllComp = async (req, res, next) => {
       });
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     return next(createError(405, 'server maintenance now please try again later'));
   }
 }

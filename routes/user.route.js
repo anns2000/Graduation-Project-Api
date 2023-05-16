@@ -16,7 +16,7 @@ Route.get('/stuff',getAllStaff)
 Route.post('/login',signin)
 Route.post('/update',auth,updateUser)
 
-Route.put('/addRating',addrating)
+Route.post('/addRating',auth,addrating)
 Route.get('/userRating')
 
 
