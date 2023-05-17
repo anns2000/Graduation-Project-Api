@@ -154,8 +154,8 @@ module.exports.updateUser = async (req, res, next) => {
 
     const { oldPassword,
         newPassword, name, phone, photo } = req.body
+    const user = await userModel.findOne({ _id: req.userId });
     if (oldPassword) {
-        const user = await userModel.findOne({ _id: req.userId });
         bcrypt.compare(oldPassword, user.password, async function (err, result) {
 
             if (result) {
