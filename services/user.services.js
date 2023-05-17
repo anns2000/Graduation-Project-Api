@@ -69,21 +69,21 @@ module.exports.getAll = async (req, res, next) => {
 }
 module.exports.getbyId = async (req, res, next) => {
     try {
-    const { id } = req.body;
-    const users = await userModel.find({ _id: id });
+        const { id } = req.body;
+        const users = await userModel.find({ _id: id });
 
-    if (users.length == 0) {
-        return next(createError(207, 'There is no User in Your System'))
-    }
-    else {
-        res.status(202).json({
-            meg: "success",
-            isError: false,
-            data: users[0]
-        });
-    }
+        if (users.length == 0) {
+            return next(createError(207, 'There is no User in Your System'))
+        }
+        else {
+            res.status(202).json({
+                meg: "success",
+                isError: false,
+                data: users[0]
+            });
+        }
 
-        
+
     } catch (error) {
         console.log(error.message);
         return next(createError(405, 'server maintenance now please try again later'))
@@ -151,42 +151,47 @@ module.exports.deleteUser = async (req, res, next) => {
 
 }
 module.exports.updateUser = async (req, res, next) => {
-    
-    const {  oldPassword,
-        newPassword,name, phone ,photo } = req.body
 
-        const user = await userModel.findOne({ _id:req.userId });
+    const { oldPassword,
+        newPassword, name, phone, photo } = req.body
+    if (oldPassword) {
+        const user = await userModel.findOne({ _id: req.userId });
         bcrypt.compare(oldPassword, user.password, async function (err, result) {
 
             if (result) {
 
                 bcrypt.hash(newPassword, 4, async function (err, hash) {
-                   
-                   await userModel.findOneAndUpdate({_id:user.id},{password:hash,name:name,phone:phone,photo:photo})
-                   const ret=await userModel.findOne({_id:user.id})
-                  // console.log(ret)
-                  // console.log(ret.photo)
 
-
-                   res.status(201).json({
+                    await userModel.findOneAndUpdate({ _id: user.id }, { password: hash, name: name, phone: phone, photo: photo })
+                    const ret = await userModel.findOne({ _id: user.id })
+                    res.status(201).json({
                         meg: "updated successfully",
                         isError: false,
                         data: ret
                     });
-                });                
+                });
             }
             else {
                 return next(createError(201, 'wrong password'))
 
             }
         });
-        
-       
-      
-    
+    } else {
+        await userModel.findOneAndUpdate({ _id: user.id }, { name: name, phone: phone, photo: photo })
+        const ret = await userModel.findOne({ _id: user.id });
+        res.status(201).json({
+            meg: "updated successfully",
+            isError: false,
+            data: ret
+        });
+    }
 
 
-    
+
+
+
+
+
 
 }
 module.exports.signin = async (req, res, next) => {
@@ -219,36 +224,33 @@ module.exports.signin = async (req, res, next) => {
 
 module.exports.addrating = async (req, res, next) => {
 
-    const{rate ,complainDes , ticketId} = req.body;
+    const { rate, complainDes, ticketId } = req.body;
     userId = req.userId
-    userName= req.userName
-    
+    userName = req.userName
 
-    let user=await userModel.findOne({_id:userId});
+
+    let user = await userModel.findOne({ _id: userId });
     console.log(user);
-    let newRate=user.rate+rate;
-    let newCount=user.countRate+1;
-    console.log(newCount,newRate);
-    await userModel.findOneAndUpdate({_id:userId},{rate:newRate,countRate:newCount});
-     user=await userModel.findOne({_id:userId});
-    
-      if(complainDes.length>1)
-      {
-          const complain=await complainsModel.findOne({ticketId:ticketId});
-          if(complain)
-          {
-             await complainsModel.findOneAndUpdate({ticketId:ticketId},{clientId:userId,clientName:userName,clientDesc:complainDes});
-             const com1=await complainsModel.findOne({ticketId:ticketId});
-                //console.log(com1);
-            }
-          else
-          {
-            const com2 =await complainsModel.insertMany({clientId:userId,clientName:userName,clientDesc:complainDes});
-          //  console.log(com2);
-        }
-      }
+    let newRate = user.rate + rate;
+    let newCount = user.countRate + 1;
+    console.log(newCount, newRate);
+    await userModel.findOneAndUpdate({ _id: userId }, { rate: newRate, countRate: newCount });
+    user = await userModel.findOne({ _id: userId });
 
-  
+    if (complainDes.length > 1) {
+        const complain = await complainsModel.findOne({ ticketId: ticketId });
+        if (complain) {
+            await complainsModel.findOneAndUpdate({ ticketId: ticketId }, { clientId: userId, clientName: userName, clientDesc: complainDes });
+            const com1 = await complainsModel.findOne({ ticketId: ticketId });
+            //console.log(com1);
+        }
+        else {
+            const com2 = await complainsModel.insertMany({ clientId: userId, clientName: userName, clientDesc: complainDes });
+            //  console.log(com2);
+        }
+    }
+
+
     res.status(202).json({
         meg: "success",
         isError: false,
@@ -256,10 +258,10 @@ module.exports.addrating = async (req, res, next) => {
     })
 }
 
-module.exports.getUserRating = async(req,res,next)=>{
-    const{userId} = req.header;
-    const userRating = await userModel.findById({userId},{countRate});
-    
+module.exports.getUserRating = async (req, res, next) => {
+    const { userId } = req.header;
+    const userRating = await userModel.findById({ userId }, { countRate });
+
     res.status(202).json({
         meg: "your rating",
         isError: false,
