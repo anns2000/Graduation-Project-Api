@@ -1,3 +1,4 @@
+const admin = require('../firebase.json'); 
 const createError = require('http-errors');
 const notificationModel = require('../models/notification.model');
 const userModel = require('../models/user.model');
@@ -42,6 +43,31 @@ module.exports.pushNotificationsById = async (req, res, next) => {
       isError: false,
       data: notifications
     });
+  } catch (error) {
+    console.log(error);
+    return next(createError(405, 'server maintenance now please try again later'));
+  }
+}
+module.exports.pushNotificationsBytoken = async (req, res, next) => {
+  try {
+    const { fcmToken, title, message } = req.body;
+    const payload = {
+      notification: {
+        title,
+        body: message,
+      },
+    };
+
+    admin.messaging().sendToDevice(fcmToken, payload)
+    .then(response => {
+      console.log('Notification sent successfully:', response);
+      res.status(200).json({ message: 'Notification sent successfully' });
+    })
+    .catch(error => {
+      console.error('Error sending notification:', error);
+      res.status(500).json({ error: 'Failed to send notification' });
+    });
+    
   } catch (error) {
     console.log(error);
     return next(createError(405, 'server maintenance now please try again later'));

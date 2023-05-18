@@ -6,6 +6,7 @@ const cloudinary = require('cloudinary');
 var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const complainsModel = require('../models/complains.model');
+const ticketsModel = require('../models/tickets.model');
 cloudinary.config({
     cloud_name: "donwkw0ny",
     api_key: "948569869913115",
@@ -230,23 +231,23 @@ module.exports.addrating = async (req, res, next) => {
 
 
     let user = await userModel.findOne({ _id: userId });
-    console.log(user);
     let newRate = user.rate + rate;
     let newCount = user.countRate + 1;
-    console.log(newCount, newRate);
     await userModel.findOneAndUpdate({ _id: userId }, { rate: newRate, countRate: newCount });
     user = await userModel.findOne({ _id: userId });
+    const myTicket= await ticketsModel.findOne({_id:ticketId});
+    const stuff=await userModel.findOne({_id:myTicket.workBy})
 
     if (complainDes.length > 1) {
         const complain = await complainsModel.findOne({ ticketId: ticketId });
         if (complain) {
-            await complainsModel.findOneAndUpdate({ ticketId: ticketId }, { clientId: userId, clientName: userName, clientDesc: complainDes });
+            await complainsModel.findOneAndUpdate({ ticketId: ticketId }, { clientId: userId,stuffId:stuff._id,stuffName:stuff.name, clientName: userName, clientDesc: complainDes });
             const com1 = await complainsModel.findOne({ ticketId: ticketId });
-            //console.log(com1);
+            //console.log(2,com1)
         }
         else {
-            const com2 = await complainsModel.insertMany({ clientId: userId, clientName: userName, clientDesc: complainDes });
-            //  console.log(com2);
+            const com2 = await complainsModel.insertMany({clientId: userId,stuffId:stuff._id,stuffName:stuff.name, clientName: userName, clientDesc: complainDes });
+            //console.log(1,com2)
         }
     }
 

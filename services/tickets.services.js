@@ -270,8 +270,10 @@ module.exports.closeTicket = async (req, res, next) => {
 
         }
         else {
-          const com = await complainModel.insertMany({ stuffId: userId, stuffName: userName, stuffDesc: complainDes, ticketId: ticket._id });
-          // console.log(com,ticket._id);
+          const user=await userModel.findOne({_id:ticket.createdBy})
+          console.log(user)
+
+          const com = await complainModel.insertMany({ stuffId: userId,clientId:ticket.createdBy,clientName:user.name, stuffName: userName, stuffDesc: complainDes, ticketId: ticket._id });
         }
       }
 

@@ -1,8 +1,14 @@
 const mongoose=require('mongoose')
 
 const complainSchema = mongoose.Schema({
-    clientDesc:String,
-    stuffDesc:String,
+    clientDesc:{
+        type :String,
+        default :""
+    },
+    stuffDesc:{
+        type :String,
+        default :""
+    },
     clientName:String,
     stuffName:String,
     clientId:{

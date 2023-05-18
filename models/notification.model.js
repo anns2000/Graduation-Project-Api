@@ -14,7 +14,7 @@ const notificationSchema = mongoose.Schema(
       default:false
     },
     userId: {
-      //IT who work at this ticket
+      //user who get this ticket
       type: mongoose.SchemaTypes.ObjectId,
       ref: "user",
     },
