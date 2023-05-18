@@ -188,6 +188,7 @@ module.exports.acceptTickets=async(req,res,next)=>{
   try {
     const {id}=req.body
     const ticket=system.cancelTicket(id);
+    console.log(ticket);
     if(!ticket)
     {
       return next(createError(201, "This ticket id is wrong"));
@@ -199,10 +200,6 @@ module.exports.acceptTickets=async(req,res,next)=>{
       isError: false,
       data  : find,
     });
-
-
-
-
     
   } catch (error) {
     console.log(error.message)
@@ -220,6 +217,24 @@ module.exports.getCllintTicket=async(req,res,next)=>{
   .populate("workBy"," name ");
   //console.log(data)
      //fix me data[0] wrong
+      res.status(201).json({
+        meg: "sucsess",
+        isError: false,
+        data  : data[0],
+      });
+  } catch (error) {
+        return next(createError(405,'server maintenance now please try again later'))
+
+  }
+}
+module.exports.getStuffTicket=async(req,res,next)=>{
+  try {
+   userId=req.userId;
+   let data=await ticketModel.find({workBy:userId,  status: { $in: ["in Queue", "in Progress"] }
+  }   )
+  .select("title status building ticketTime createdBy workBy ")
+  .populate("createdBy","name , department ")
+  .populate("workBy"," name ");
       res.status(201).json({
         meg: "sucsess",
         isError: false,

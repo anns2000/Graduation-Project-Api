@@ -6,7 +6,8 @@ const { submitTicket,  allTickets, getUserTickets,
      allInProgressTickets, acceptTickets,
       getCllintTicket, 
       allinQueueTickets,
-      closeTicket} = require('../services/tickets.services')
+      closeTicket,
+      getStuffTicket} = require('../services/tickets.services')
 
 const Route = require('express').Router()
 
@@ -20,6 +21,7 @@ Route.get('/allInQueueTickets',auth,allinQueueTickets);
 Route.get('/allInProgressTickets',auth,allInProgressTickets);
 Route.post('/acceptTicket',auth,acceptTickets);
 Route.get('/getCllintTicket',auth,getCllintTicket);
+Route.get('/getStuffTicket',auth,getStuffTicket);
 
 
 
