@@ -21,7 +21,7 @@ module.exports.submitTicket = async (req, res, next) => {
     {
       return next(new createError(201,"this user have in Queue or in Progress ticket"))
     }
-    const ticketData = await ticketModel.insertMany({ title, desc, createdBy:userId, buildingId, userId, ticketTime: new Date() });
+    const ticketData = await ticketModel.insertMany({ title, desc, createdBy:userId, building:buildingId , userId, ticketTime: new Date() });
     let timeTable= await timeTableModel.findOne({isActive:true});
     const userDepartment =await userModel.findOne({_id:userId});
 
@@ -234,7 +234,7 @@ module.exports.getStuffTicket=async(req,res,next)=>{
   }   )
   .select("title status building ticketTime createdBy workBy ")
   .populate("createdBy","name , department ")
-  .populate("workBy"," name ");
+  .populate("workBy"," name ").populate("building"," name ");
       res.status(201).json({
         meg: "sucsess",
         isError: false,
