@@ -215,7 +215,7 @@ module.exports.getCllintTicket = async (req, res, next) => {
     })
       .select("title status building ticketTime createdBy workBy ")
       .populate("createdBy", "name , department ")
-      .populate("workBy", " name ");
+      .populate("workBy", " name ").populate("building", " name ");
     //console.log(data)
     //fix me data[0] wrong
     res.status(201).json({
