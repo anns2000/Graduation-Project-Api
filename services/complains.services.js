@@ -38,12 +38,11 @@ module.exports.getAllComplains=async(req,res,next)=>{
     
     complains = await complainModel.find();
 
-    console.log(complains);
 
     res.status(201).json({
         meg:"All Complains",
         isError:false,
-        data:complains
+        data:complains ?? []
       });
 }
 

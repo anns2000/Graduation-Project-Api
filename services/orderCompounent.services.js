@@ -40,20 +40,14 @@ module.exports.orderResponse = async (req, res, next) => {
 module.exports.getAllComp = async (req, res, next) => {
   try {
     let compounent = await compounentModel.find({ isSend: false }).populate('user', 'name photo');
-    if (compounent) {
+
       res.status(201).json({
         meg: "Sucsess",
         isError: false,
-        data: compounent
+        data: compounent ?? []
       });
-    }
-    else {
-      res.status(201).json({
-        meg: "there is no orders ",
-        isError: true,
-        data: []
-      });
-    }
+    
+   
   } catch (error) {
     console.log(error.message);
     return next(createError(405, 'server maintenance now please try again later'));

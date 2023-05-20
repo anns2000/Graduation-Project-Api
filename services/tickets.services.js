@@ -50,7 +50,6 @@ module.exports.CancelTicket = async (req, res, next) => {
       return next(createError(201, "this ticket not in our system pls call the admin"));
     }
 
-    console.log("ret=>", ret);
     res.status(201).json({
       meg: "canclled",
       isError: false,

@@ -32,25 +32,17 @@ module.exports.getAll=async(req,res,next)=>{
 
 const department=await departmentModel.find()
 
-if(department.length==0)
-{
-    res.status(201).json({
-        meg:"there is no department ",
-        isError:true,
-        data:[]
-      });
 
-}
-else
-{
+
+
 
     res.status(201).json({
         meg:"sucsess",
         isError:false,
-        data:department
+        data:department ??[]
       });
 
-}
+
 
 
 }

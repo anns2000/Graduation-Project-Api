@@ -47,17 +47,14 @@ module.exports.getAll = async (req, res, next) => {
     try {
         const users = await userModel.find();
 
-        if (users.length == 0) {
-            return next(createError(201, 'there is no user in your system'))
-
-        }
-        else {
+      
+      
             res.status(202).json({
                 meg: "success",
                 isError: false,
-                data: users
+                data: users ?? []
             });
-        }
+        
 
 
     } catch (error) {
@@ -94,34 +91,28 @@ module.exports.getAllClient = async (req, res, next) => {
 
     const users = await userModel.find({ role: "client" });
 
-    if (users.length == 0) {
-        return next(createError(207, 'there is no client in your system'))
+   
 
-    }
-    else {
         res.status(202).json({
             meg: "success",
             isError: false,
-            data: users
+            data: users ?? []
         });
-    }
+    
 
 }
 module.exports.getAllStaff = async (req, res, next) => {
 
     const users = await userModel.find({ role: "stuff" });
 
-    if (users.length == 0) {
-        return next(createError(201, 'there is no stuff in your system'))
-
-    }
-    else {
+    
+   
         res.status(202).json({
             meg: "success",
             isError: false,
-            data: users
+            data: users ?? []
         });
-    }
+    
 
 }
 module.exports.deleteUser = async (req, res, next) => {

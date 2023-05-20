@@ -20,18 +20,15 @@ module.exports.getAll=async(req,res,next)=>{
   
      const questions= await questionsModel.find();
 
-     if(questions)
-     {
+    
+     
          res.status(201).json({
            meg:"success",
            isError:false,
-           data:questions
+           data:questions ?? []
          });
-     }
-     else
-     {
-        return next(createError(201,"there is no questions at all"));
-     }
+     
+    
     }
     
     module.exports.deleteOne=async(req,res,next)=>{

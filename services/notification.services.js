@@ -1,4 +1,4 @@
-const admin = require('../firebase.json'); 
+const admin = require('./firebaseAdmin'); 
 const createError = require('http-errors');
 const notificationModel = require('../models/notification.model');
 const userModel = require('../models/user.model');
@@ -27,7 +27,7 @@ module.exports.getAllNotificationsById = async (req, res, next) => {
     res.status(201).json({
       meg: "Sucsess",
       isError: false,
-      data: notifications
+      data: notifications ??[]
     });
   } catch (error) {
     console.log(error);

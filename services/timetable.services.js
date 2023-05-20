@@ -28,7 +28,7 @@ module.exports.getTimeTable=async(req,res,next)=>{
     res.status(201).json({
       meg:"success",
       isError:false,
-      data:timeTable
+      data:timeTable ?? []
     });
 
     

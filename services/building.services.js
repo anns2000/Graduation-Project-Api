@@ -28,22 +28,15 @@ module.exports.addBuilding=async(req,res,next)=>{
 module.exports.getAll=async(req,res,next)=>{
 
 const building=await buildingModel.find()
-console.log(building);
-if(building.length==0)
-{
 
-    return next(createError(201,"there is no building at all"));
-}
-else
-{
 
     res.status(201).json({
         meg:"sucsess",
         isError:false,
-        data:building
+        data:building ?? []
       });
 
-}
+
 
 
 }
