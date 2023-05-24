@@ -73,3 +73,48 @@ module.exports.pushNotificationsBytoken = async (req, res, next) => {
     return next(createError(405, 'server maintenance now please try again later'));
   }
 }
+module.exports.seenById = async (req,res,next) =>{
+  try {
+    const {userId} = req.userId;
+    const {notId} = req.body;
+    await notificationModel.findByIdAndUpdate({_id:notId,userId:userId},{isSeen:true});
+    res.status(201).json({
+      meg: "seen notification",
+      isError: false,
+      data: []
+    });
+  } catch (error) {
+    console.log(error);
+    return next(createError(405, 'server maintenance now please try again later'));
+  }
+}
+module.exports.markAllRead = async (req,res,next) =>{
+  try {
+    const {userId} = req.userId;
+    await notificationModel.updateMany({userId:userId},{isSeen:true});
+    res.status(201).json({
+      meg: "seen all notifications",
+      isError: false,
+      data: []
+    });
+  } catch (error) {
+    console.log(error);
+    return next(createError(405, 'server maintenance now please try again later'));
+  }
+}
+module.exports.adminGetAll = async (req, res, next) => {
+  try {
+    const notifications = await notificationModel.find();
+    res.status(201).json({
+      meg: "sucsses",
+      isError: false,
+      data: notifications ?? []
+    });
+  } catch (error) {
+    console.log(error);
+    return next(createError(405, 'server maintenance now please try again later'));
+  }
+}
+
+
+

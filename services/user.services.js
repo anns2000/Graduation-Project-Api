@@ -15,7 +15,7 @@ cloudinary.config({
 
 module.exports.addUser = async (req, res, next) => {
     try {
-        const { username, password, role, name, department, phone } = req.body;
+        const { username, password, role, name, department, phone, fcmToken } = req.body;
         const add = await userModel.findOne({ username })
         if (add) {
             return next(createError(201, 'this user already exists'))
