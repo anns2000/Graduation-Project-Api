@@ -5,6 +5,7 @@ const system = require('./system');
 const timeTableModel = require('../models/timeTable.model');
 const userModel = require('../models/user.model');
 const complainModel = require('../models/complains.model');
+const { pushNotificationsBytoken } = require('./notification.services');
 
 
 module.exports.submitTicket = async (req, res, next) => {
@@ -17,6 +18,7 @@ module.exports.submitTicket = async (req, res, next) => {
     if (oldTicket) {
       return next(new createError(201, "this user have in Queue or in Progress ticket"))
     }
+
     const ticketData = await ticketModel.insertMany({ title, desc, createdBy: userId, building: buildingId, userId, ticketTime: new Date() });
     let timeTable = await timeTableModel.findOne({ isActive: true });
     const userDepartment = await userModel.findOne({ _id: userId });
@@ -24,8 +26,9 @@ module.exports.submitTicket = async (req, res, next) => {
     const index = timeTable.priorityList.findIndex((element) => element.departmentName === userDepartment.department);
     system.addTicket({
       id: ticketData[0].id,
-      priority: index + 1,
+      priority: (timeTable.priorityList.length - index)*-1   ,
     });
+
     const arr = system.print()
 
     res.status(201).json({
@@ -34,7 +37,7 @@ module.exports.submitTicket = async (req, res, next) => {
       data: ticketData
     });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     return next(createError(405, 'server maintenance now please try again later'))
 
   }
@@ -160,15 +163,14 @@ module.exports.getQueueTickets = async (req, res, next) => {
   try {
     const myArray = [];
     const arr = system.print()
+    console.log(arr)
     for (let i = 0; i < arr.length; i++) {
 
       let data = await ticketModel.findOne({ _id: arr[i].id })
         .select("title status desc building ")
         .populate("createdBy", "name , photo , department ");
-      console.log(data)
-      data.priority = arr[i].priority;
-
-      myArray.push(data);
+      const newData = {...data.toObject() ,priority :(arr[i].priority)*-1};
+      myArray.push(newData);
     }
 
     res.status(201).json({
@@ -188,14 +190,17 @@ module.exports.acceptTickets = async (req, res, next) => {
   try {
     const { id } = req.body
     const ticket = system.cancelTicket(id);
-    console.log(ticket);
     if (!ticket) {
       return next(createError(201, "This ticket id is wrong"));
     }
     await ticketModel.findByIdAndUpdate({ _id: id }, { status: "in Progress", ticketTime: new Date(), workBy: req.userId });
     const find = await ticketModel.find({ _id: id });
-    res.status(201).json({
-      meg: "ticket accpeted",
+   const fcmToken="fe_9wODsSua8mVD8zQ3KjW:APA91bFczV4sjGESIiDjseNFvahjn21lkZCREN6jlLnspmJ0BNVXlHLmKbbdQbjj_no9cE62xXkaRqtsaCLySSzuAPgZavdCzfdQ7lSPDynDLisdqc-OxZfqVC3PczouWR7y3uonKAdG"
+   // fix me 
+  const data= await pushNotificationsBytoken(fcmToken,"Accepted","Your Ticket Has Been Accepted",1)
+   // console.log(data);
+  res.status(201).json({
+      meg: "ticket accepted",
       isError: false,
       data: find,
     });
@@ -280,7 +285,10 @@ module.exports.closeTicket = async (req, res, next) => {
     else {
       return next(createError(201, "you donot have ticket to close"));
     }
-
+    const fcmToken="fe_9wODsSua8mVD8zQ3KjW:APA91bFczV4sjGESIiDjseNFvahjn21lkZCREN6jlLnspmJ0BNVXlHLmKbbdQbjj_no9cE62xXkaRqtsaCLySSzuAPgZavdCzfdQ7lSPDynDLisdqc-OxZfqVC3PczouWR7y3uonKAdG"
+   // fix me 
+  const data= await pushNotificationsBytoken(fcmToken,"closed","Your Ticket Has Been closed",1)
+   // console.log(data);
     res.status(201).json({
       meg: "done",
       isError: false,
