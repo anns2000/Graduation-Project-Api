@@ -134,7 +134,6 @@ module.exports.allInProgressTickets = async (req, res, next) => {
 
   } catch (error) {
     return next(createError(405, 'server maintenance now please try again later'))
-
   }
 
 };

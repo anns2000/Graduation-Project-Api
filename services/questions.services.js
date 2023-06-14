@@ -78,14 +78,18 @@ module.exports.agora= async(req,res,next)=>{
     const user= await userModel.findOne({_id:userId});
     const me= await userModel.findOne({_id:myId});
 
-    await notificationModel.insertMany({ title: "video Call", desc: `${me.name} waiting you in vedio call room`, userId: user._id,type:"videoCall",state:"normal",Data:(me._id).toString()});
-
-    if(user.fcmToken)
+    if(userId)
     {
+        await notificationModel.insertMany({ title: "video Call", desc: `${me.name} waiting you in vedio call room`, userId: user._id,type:"videoCall",state:"normal",Data:(me._id).toString()});
 
-        await pushNotificationsBytoken(user.fcmToken,"video Call",`${me.name} waiting you in vedio call room`,me._id);
-
+        if(user.fcmToken)
+        {
+    
+            await pushNotificationsBytoken(user.fcmToken,"video Call",`${me.name} waiting you in vedio call room`,me._id);
+    
+        }
     }
+    
     
     res.status(201).json({
       meg: "sucsses",

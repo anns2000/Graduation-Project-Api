@@ -5,7 +5,6 @@ const port = process.env.port || 5001
 app.use(express.json())
 const mongoose = require('mongoose');
 const createError = require('http-errors');
-const userModel = require('./models/user.model');
 
  mongoose.connect('mongodb+srv://anns2000:anas123@cluster0.lyb7wo3.mongodb.net/GP')
    .then(() => console.log('Connected!'));
@@ -30,6 +29,7 @@ app.use('/complain',require('./routes/complains.route'))
 
 
 app.get('/', async(req, res, next) => {
+
     res.send({ message: 'Awesome it works now 🐻' });
 });
 
