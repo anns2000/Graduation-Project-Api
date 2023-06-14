@@ -48,23 +48,24 @@ module.exports.pushNotificationsById = async (req, res, next) => {
     return next(createError(405, 'server maintenance now please try again later'));
   }
 }
-module.exports.pushNotificationsBytoken = async (fcmToken, title, message , type ) => {
+module.exports.pushNotificationsBytoken = async (fcmToken,title,message,data) => {
   try {
     const payload = {
       notification: {
         title,
         body: message,
-        type:"1"
+        Data:data.toString(),
       },
     };
 
 
-   const res=await admin.messaging().sendToDevice(fcmToken, payload);
+    const res=await admin.messaging().sendToDevice(fcmToken, payload);
+    console.log("done");
     return res;
  
     
   } catch (error) {
-    console.log(error);
+    console.log("error-> ",error.message);
   }
 }
 module.exports.seenById = async (req,res,next) =>{

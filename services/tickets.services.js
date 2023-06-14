@@ -6,6 +6,7 @@ const timeTableModel = require('../models/timeTable.model');
 const userModel = require('../models/user.model');
 const complainModel = require('../models/complains.model');
 const { pushNotificationsBytoken } = require('./notification.services');
+const notificationModel = require('../models/notification.model');
 
 
 module.exports.submitTicket = async (req, res, next) => {
@@ -26,10 +27,22 @@ module.exports.submitTicket = async (req, res, next) => {
     const index = timeTable.priorityList.findIndex((element) => element.departmentName === userDepartment.department);
     system.addTicket({
       id: ticketData[0].id,
-      priority: (timeTable.priorityList.length - index)*-1   ,
+      priority: (timeTable.priorityList.length - index) * -1,
     });
 
-    const arr = system.print()
+    //const arr = system.print()
+    const user = await userModel.find({ role: "stuff" })
+
+    for (let i = 0; i < user.length; i++) {
+
+      await notificationModel.insertMany({ title: "new", desc: "there is new ticker", userId: user[i]._id });
+     
+      if (user[i].fcmToken) {
+        console.log(user[i].fcmToken);
+          const data = await pushNotificationsBytoken(user[i].fcmToken, "new", "there is new ticker","")
+      }
+
+    }
 
     res.status(201).json({
       meg: "Ticket Submited",
@@ -37,7 +50,7 @@ module.exports.submitTicket = async (req, res, next) => {
       data: ticketData
     });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     return next(createError(405, 'server maintenance now please try again later'))
 
   }
@@ -169,7 +182,7 @@ module.exports.getQueueTickets = async (req, res, next) => {
       let data = await ticketModel.findOne({ _id: arr[i].id })
         .select("title status desc building ")
         .populate("createdBy", "name , photo , department ");
-      const newData = {...data.toObject() ,priority :(arr[i].priority)*-1};
+      const newData = { ...data.toObject(), priority: (arr[i].priority) * -1 };
       myArray.push(newData);
     }
 
@@ -190,16 +203,22 @@ module.exports.acceptTickets = async (req, res, next) => {
   try {
     const { id } = req.body
     const ticket = system.cancelTicket(id);
+
     if (!ticket) {
       return next(createError(201, "This ticket id is wrong"));
     }
     await ticketModel.findByIdAndUpdate({ _id: id }, { status: "in Progress", ticketTime: new Date(), workBy: req.userId });
     const find = await ticketModel.find({ _id: id });
-   const fcmToken="fe_9wODsSua8mVD8zQ3KjW:APA91bFczV4sjGESIiDjseNFvahjn21lkZCREN6jlLnspmJ0BNVXlHLmKbbdQbjj_no9cE62xXkaRqtsaCLySSzuAPgZavdCzfdQ7lSPDynDLisdqc-OxZfqVC3PczouWR7y3uonKAdG"
-   // fix me 
-  const data= await pushNotificationsBytoken(fcmToken,"Accepted","Your Ticket Has Been Accepted",1)
-   // console.log(data);
-  res.status(201).json({
+    console.log("ticket -> creater", find[0].createdBy)
+    const user = await userModel.findOne({ _id: find[0].createdBy })
+    console.log("user", user.fcmToken)
+
+    await notificationModel.insertMany({ title: "Accepted", desc: "Your Ticket Has Been Accepted", userId: find[0].createdBy });
+    if (user.fcmToken != "") {
+      console.log(typeof (find[0].id));
+      const data = await pushNotificationsBytoken(user.fcmToken, "Accepted", "Your Ticket Has Been Accepted", find[0]._id)
+    }
+    res.status(201).json({
       meg: "ticket accepted",
       isError: false,
       data: find,
@@ -274,10 +293,10 @@ module.exports.closeTicket = async (req, res, next) => {
 
         }
         else {
-          const user=await userModel.findOne({_id:ticket.createdBy})
+          const user = await userModel.findOne({ _id: ticket.createdBy })
           console.log(user)
 
-          const com = await complainModel.insertMany({ stuffId: userId,clientId:ticket.createdBy,clientName:user.name, stuffName: userName, stuffDesc: complainDes, ticketId: ticket._id });
+          const com = await complainModel.insertMany({ stuffId: userId, clientId: ticket.createdBy, clientName: user.name, stuffName: userName, stuffDesc: complainDes, ticketId: ticket._id });
         }
       }
 
@@ -285,10 +304,13 @@ module.exports.closeTicket = async (req, res, next) => {
     else {
       return next(createError(201, "you donot have ticket to close"));
     }
-    const fcmToken="fe_9wODsSua8mVD8zQ3KjW:APA91bFczV4sjGESIiDjseNFvahjn21lkZCREN6jlLnspmJ0BNVXlHLmKbbdQbjj_no9cE62xXkaRqtsaCLySSzuAPgZavdCzfdQ7lSPDynDLisdqc-OxZfqVC3PczouWR7y3uonKAdG"
-   // fix me 
-  const data= await pushNotificationsBytoken(fcmToken,"closed","Your Ticket Has Been closed",1)
-   // console.log(data);
+
+    await notificationModel.insertMany({ title: "closed", desc: "Your Ticket Has Been closed", userId: ticket.createdBy });
+
+
+    const owneruser = await userModel.findOne({_id:ticket.createdBy})
+
+    const data = await pushNotificationsBytoken(owneruser.fcmToken, "closed", "Your Ticket Has Been closed",ticket._id)
     res.status(201).json({
       meg: "done",
       isError: false,
