@@ -7,8 +7,8 @@ const notificationSchema = mongoose.Schema(
     title: String,
     desc: String,
     Data:String,
-    state : String,
-    type:String,
+    state : String,  // enum NotificationState { warning, normal, danger, safe } 
+    type:String,     //enum NotificationType { videoCall, accepted , closed,  newTicket ,firstChat , newOrder ,orderResult }
     isSeen:{
       type: Boolean,
       default:false

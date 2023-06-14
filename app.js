@@ -1,11 +1,11 @@
 const express = require('express')
-const Agora = require("agora-access-token");
 
 const app = express()
 const port = process.env.port || 5001
 app.use(express.json())
 const mongoose = require('mongoose');
 const createError = require('http-errors');
+const userModel = require('./models/user.model');
 
  mongoose.connect('mongodb+srv://anns2000:anas123@cluster0.lyb7wo3.mongodb.net/GP')
    .then(() => console.log('Connected!'));
@@ -25,19 +25,7 @@ app.use('/timeTable', require('./routes/timeTable.route'))
 app.use('/notification', require('./routes/notification.route'))
 app.use('/complain',require('./routes/complains.route'))
 
-app.post("/gettoken", (req, res) => {
-    const appID = "c3e8e71cae794f4eb01046f29e2e84e9";
-    const appCertificate = "101f2ad714e742ebbf1303cf7bb032f1";
-    const expirationTimeInSeconds = 3600;
-    const uid = Math.floor(Math.random() * 100000);
-    const role = req.body.isPublisher ? Agora.RtcRole.PUBLISHER : Agora.RtcRole.SUBSCRIBER;
-    const channel = req.body.channel;
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-    const expirationTimestamp = currentTimestamp + expirationTimeInSeconds;
-  
-    const token = Agora.RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channel, uid, role, expirationTimestamp);
-    res.send({ uid, token });
-  });
+
   
 
 
