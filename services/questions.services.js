@@ -61,7 +61,9 @@ module.exports.deleteOne = async (req, res, next) => {
     }
 }
 module.exports.agora= async(req,res,next)=>{
-    const appID = "c3e8e71cae794f4eb01046f29e2e84e9";
+
+    try {
+        const appID = "c3e8e71cae794f4eb01046f29e2e84e9";
     const appCertificate = "101f2ad714e742ebbf1303cf7bb032f1";
     const expirationTimeInSeconds = 3600;
     const uid = Math.floor(Math.random() * 100000);
@@ -75,11 +77,11 @@ module.exports.agora= async(req,res,next)=>{
    
     const token = Agora.RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channel, uid, role, expirationTimestamp);
     
-    const user= await userModel.findOne({_id:userId});
     const me= await userModel.findOne({_id:myId});
-
+    
     if(userId)
     {
+        const user= await userModel.findOne({_id:userId});
         await notificationModel.insertMany({ title: "video Call", desc: `${me.name} waiting you in vedio call room`, userId: user._id,type:"videoCall",state:"normal",Data:(me._id).toString()});
 
         if(user.fcmToken)
@@ -97,6 +99,11 @@ module.exports.agora= async(req,res,next)=>{
       data: { uid, token }
     });
 
+        
+    } catch (error) {
+        console.log(error.messsage)
+    }
+    
 }
 
 
