@@ -40,7 +40,7 @@ app.post("/gettoken", (req, res) => {
 
 
 app.get('/', async(req, res, next) => {
-    res.send({ message: 'Awesome it works 🐻' });
+    res.send({ message: 'Awesome it works now 🐻' });
 });
 
 app.use((req, res, next) => {
@@ -58,7 +58,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-
+// hello world
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 process.on('unhandledRejectionsss', (err) => {
