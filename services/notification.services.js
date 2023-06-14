@@ -22,8 +22,8 @@ module.exports.updateFcmToken = async (req, res, next) => {
 module.exports.getAllNotificationsById = async (req, res, next) => {
   try {
     const userId = req.userId;
-    const notifications = await notificationModel.find(userId);
-    await notificationModel.updateMany({},{isSeen : true});
+    const notifications = await notificationModel.find({userId:userId})
+    await notificationModel.updateMany({userId:userId},{isSeen : true});
     res.status(201).json({
       meg: "Sucsess",
       isError: false,
