@@ -78,7 +78,7 @@ module.exports.agora= async(req,res,next)=>{
     const user= await userModel.findOne({_id:userId});
     const me= await userModel.findOne({_id:myId});
 
-    await notificationModel.insertMany({ title: "video Call", desc: `${me.name} waiting you in vedio call room`, userId: user._id,type:"videoCall",state:"normal",data:(me._id).toString()});
+    await notificationModel.insertMany({ title: "video Call", desc: `${me.name} waiting you in vedio call room`, userId: user._id,type:"videoCall",state:"normal",Data:(me._id).toString()});
 
     if(user.fcmToken)
     {
