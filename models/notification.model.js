@@ -1,4 +1,3 @@
-///Auther Mario Ktkt 
 
 
 const mongoose = require("mongoose");
@@ -7,6 +6,7 @@ const notificationSchema = mongoose.Schema(
   {
     title: String,
     desc: String,
+    Data:String,
     state : String,
     type:String,
     isSeen:{
