@@ -35,7 +35,7 @@ module.exports.submitTicket = async (req, res, next) => {
 
     for (let i = 0; i < user.length; i++) {
      
-      await notificationModel.insertMany({ title: "new Ticket", desc: "there is new ticker", userId: user[i]._id ,type:"newTicket",state:"normal",data:(ticketData[0].id).toString()});
+      await notificationModel.insertMany({ title: "new Ticket", desc: "there is new ticker", userId: user[i]._id ,type:"newTicket",state:"normal",Data:(ticketData[0].id).toString()});
      
       if (user[i].fcmToken) {
         console.log(user[i].fcmToken);
@@ -215,7 +215,7 @@ module.exports.acceptTickets = async (req, res, next) => {
     const user = await userModel.findOne({ _id: find[0].createdBy })
     console.log("user", user.fcmToken)
 
-    await notificationModel.insertMany({ title: "Ticket Accepted", desc: "Your Ticket Has Been Accepted", userId: find[0].createdBy,type:"accepted",state:"safe",data:(find[0]._id).toString()});
+    await notificationModel.insertMany({ title: "Ticket Accepted", desc: "Your Ticket Has Been Accepted", userId: find[0].createdBy,type:"accepted",state:"safe",Data:(find[0]._id).toString()});
     if (user.fcmToken != "") {
       console.log(typeof (find[0].id));
       const data = await pushNotificationsBytoken(user.fcmToken, "Accepted", "Your Ticket Has Been Accepted", find[0]._id)
@@ -307,7 +307,7 @@ module.exports.closeTicket = async (req, res, next) => {
       return next(createError(201, "you donot have ticket to close"));
     }
 
-    await notificationModel.insertMany({ title: "closed", desc: "Your Ticket Has Been closed", userId: ticket.createdBy,type:"closed",state:"normal",data:(ticket._id).toString() });
+    await notificationModel.insertMany({ title: "closed", desc: "Your Ticket Has Been closed", userId: ticket.createdBy,type:"closed",state:"normal",Data:(ticket._id).toString() });
 
 
     const owneruser = await userModel.findOne({_id:ticket.createdBy})
