@@ -181,7 +181,8 @@ module.exports.getQueueTickets = async (req, res, next) => {
 
       let data = await ticketModel.findOne({ _id: arr[i].id })
         .select("title status desc building ")
-        .populate("createdBy", "name , photo , department ");
+        .populate("createdBy", "name , photo , department ")
+        .populate("building","name");
       const newData = { ...data.toObject(), priority: (arr[i].priority) * -1 };
       myArray.push(newData);
     }
