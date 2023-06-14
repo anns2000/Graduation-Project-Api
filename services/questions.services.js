@@ -3,6 +3,7 @@ const createError = require('http-errors');
 const { pushNotificationsBytoken } = require('./notification.services');
 const Agora = require("agora-access-token");
 const userModel = require("../models/user.model");
+const notificationModel = require("../models/notification.model");
 
 
 module.exports.addQuestion = async (req, res, next) => {
@@ -75,11 +76,13 @@ module.exports.agora= async(req,res,next)=>{
     const token = Agora.RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channel, uid, role, expirationTimestamp);
     
     const user= await userModel.findOne({_id:userId});
-    console.log(myId);
     const me= await userModel.findOne({_id:myId});
+
+    await notificationModel.insertMany({ title: "video Call", desc: `${me.name} waiting you in vedio call room`, userId: user._id,type:"videoCall",state:"normal",data:(me._id).toString()});
 
     if(user.fcmToken)
     {
+
         await pushNotificationsBytoken(user.fcmToken,"video Call",`${me.name} waiting you in vedio call room`,me._id);
 
     }
