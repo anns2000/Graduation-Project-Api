@@ -334,17 +334,15 @@ module.exports.getTicketById = async (req, res, next) => {
    const {id}=req.body
    
 
-    let data = await ticketModel.find({
-      workBy: userId, status: { $in: ["in Queue", "in Progress"] }
-    })
-      .select("title status building ticketTime createdBy workBy ")
-      .populate("createdBy", "name , department ")
-      .populate("workBy", " name ").populate("building", " name ");
+    let data = await ticketModel.findOne({ _id:id})
+      .select(" createdAt ")
+      .populate("createdBy", "name ")
+      .populate("workBy", " name ")
    
       res.status(201).json({
       meg: "sucsess",
       isError: false,
-      data: data[0],
+      data: data,
     });
   } catch (error) {
     return next(createError(405, 'server maintenance now please try again later'))
