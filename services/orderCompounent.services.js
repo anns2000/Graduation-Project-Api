@@ -42,6 +42,7 @@ module.exports.orderResponse = async (req, res, next) => {
     const { id, isAccepted } = req.body;
     const sendData = await compounentModel.findByIdAndUpdate({ _id: id }, { isSend: true, isAccepted });
     const data = await compounentModel.findOne({ _id: id });
+    console.log(data);
     const user=await userModel.findOne({_id:data.user});
     console.log(data.user)
     console.log(user.fcmToken)

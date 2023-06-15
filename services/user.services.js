@@ -219,6 +219,10 @@ module.exports.addrating = async (req, res, next) => {
     const { rate, complainDes, ticketId } = req.body;
     userId = req.userId
     userName = req.userName
+    // noti for the admin if complainDes
+
+  
+   
 
 
     let user = await userModel.findOne({ _id: userId });
@@ -230,6 +234,19 @@ module.exports.addrating = async (req, res, next) => {
     const stuff=await userModel.findOne({_id:myTicket.workBy})
 
     if (complainDes.length > 1) {
+
+        const user = await userModel.find({ role: "admin" })
+        for (let i = 0; i < user.length; i++) {
+         
+          await notificationModel.insertMany({ title: "new complain", desc: "You Have New complain", userId: user[i]._id ,type:"newOrder",state:"normal",Data:""});
+         
+          if (user[i].fcmToken) {
+            console.log(user[i].fcmToken);
+           
+            const data = await pushNotificationsBytoken(user[i].fcmToken, "new order", "You Have New Compounent order","")
+          }
+        }
+
         const complain = await complainsModel.findOne({ ticketId: ticketId });
         if (complain) {
             await complainsModel.findOneAndUpdate({ ticketId: ticketId }, { clientId: userId,stuffId:stuff._id,stuffName:stuff.name, clientName: userName, clientDesc: complainDes });
