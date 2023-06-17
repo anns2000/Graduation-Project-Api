@@ -7,6 +7,8 @@ var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const complainsModel = require('../models/complains.model');
 const ticketsModel = require('../models/tickets.model');
+const notificationModel = require('../models/notification.model');
+const { pushNotificationsBytoken } = require('./notification.services');
 cloudinary.config({
     cloud_name: "donwkw0ny",
     api_key: "948569869913115",
@@ -240,11 +242,12 @@ module.exports.addrating = async (req, res, next) => {
 
     try {
         const { rate, complainDes, ticketId } = req.body;
-        userId = req.userId
-        userName = req.userName
-        // noti for the admin if complainDes
+        console.log(rate);
+      const  userId = req.userId
+      const  userName = req.userName
 
         let user = await userModel.findOne({ _id: userId });
+        console.log(user);
         let newRate = user.rate + rate;
         let newCount = user.countRate + 1;
         await userModel.findOneAndUpdate({ _id: userId }, { rate: newRate, countRate: newCount });
@@ -256,9 +259,7 @@ module.exports.addrating = async (req, res, next) => {
 
             const user = await userModel.find({ role: "admin" })
             for (let i = 0; i < user.length; i++) {
-
                 await notificationModel.insertMany({ title: "new complain", desc: "You Have New complain", userId: user[i]._id, type: "newOrder", state: "normal", Data: "" });
-
                 if (user[i].fcmToken) {
                     console.log(user[i].fcmToken);
 
