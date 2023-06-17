@@ -47,14 +47,14 @@ module.exports.getAll = async (req, res, next) => {
     try {
         const users = await userModel.find();
 
-      
-      
-            res.status(202).json({
-                meg: "success",
-                isError: false,
-                data: users ?? []
-            });
-        
+
+
+        res.status(202).json({
+            meg: "success",
+            isError: false,
+            data: users ?? []
+        });
+
 
 
     } catch (error) {
@@ -89,93 +89,108 @@ module.exports.getbyId = async (req, res, next) => {
 }
 module.exports.getAllClient = async (req, res, next) => {
 
-    const users = await userModel.find({ role: "client" });
+    try {
+        const users = await userModel.find({ role: "client" });
 
-   
+
 
         res.status(202).json({
             meg: "success",
             isError: false,
             data: users ?? []
         });
-    
+
+    } catch (error) {
+        return next(createError(405, 'server maintenance now please try again later'))
+
+    }
+
 
 }
 module.exports.getAllStaff = async (req, res, next) => {
 
-    const users = await userModel.find({ role: "stuff" });
-
-    
-   
+    try {
+        const users = await userModel.find({ role: "stuff" });
         res.status(202).json({
             meg: "success",
             isError: false,
             data: users ?? []
         });
-    
+    } catch (error) {
+        return next(createError(405, 'server maintenance now please try again later'))
+
+    }
+
+
 
 }
 module.exports.deleteUser = async (req, res, next) => {
 
-    const { id } = req.body;
-    //console.log(id)
-    if (id.length < 12) {
-        while (id.length < 12) {
-            id += "0";
+    try {
+
+        const dele = await userModel.findById(id);
+        if (dele) {
+            await userModel.findByIdAndRemove(id);
+            res.status(202).json({
+                meg: "deleted",
+                isError: false,
+                data: []
+
+            });
         }
-    }
+        else {
+            return next(createError(201, 'this user does not exists'))
 
-
-    const dele = await userModel.findById(id);
-    if (dele) {
-        await userModel.findByIdAndRemove(id);
-        res.status(202).json({
-            meg: "deleted",
-            isError: false,
-            data: []
-
-        });
-    }
-    else {
-        return next(createError(201, 'this user does not exists'))
+        }
+    } catch (error) {
+        return next(createError(405, 'server maintenance now please try again later'))
 
     }
+
+
+
 
 }
 module.exports.updateUser = async (req, res, next) => {
 
-    const { oldPassword,
-        newPassword, name, phone, photo } = req.body
-    const user = await userModel.findOne({ _id: req.userId });
-    if (oldPassword) {
-        bcrypt.compare(oldPassword, user.password, async function (err, result) {
+    try {
+        const { oldPassword,
+            newPassword, name, phone, photo } = req.body
+        const user = await userModel.findOne({ _id: req.userId });
+        if (oldPassword) {
+            bcrypt.compare(oldPassword, user.password, async function (err, result) {
 
-            if (result) {
+                if (result) {
 
-                bcrypt.hash(newPassword, 4, async function (err, hash) {
+                    bcrypt.hash(newPassword, 4, async function (err, hash) {
 
-                    await userModel.findOneAndUpdate({ _id: user.id }, { password: hash, name: name, phone: phone, photo: photo })
-                    const ret = await userModel.findOne({ _id: user.id })
-                    res.status(201).json({
-                        meg: "updated successfully",
-                        isError: false,
-                        data: ret
+                        await userModel.findOneAndUpdate({ _id: user.id }, { password: hash, name: name, phone: phone, photo: photo })
+                        const ret = await userModel.findOne({ _id: user.id })
+                        res.status(201).json({
+                            meg: "updated successfully",
+                            isError: false,
+                            data: ret
+                        });
                     });
-                });
-            }
-            else {
-                return next(createError(201, 'wrong password'))
+                }
+                else {
+                    return next(createError(201, 'wrong password'))
 
-            }
-        });
-    } else {
-        await userModel.findOneAndUpdate({ _id: user.id }, { name: name, phone: phone, photo: photo })
-        const ret = await userModel.findOne({ _id: user.id });
-        res.status(201).json({
-            meg: "updated successfully",
-            isError: false,
-            data: ret
-        });
+                }
+            });
+        } else {
+            await userModel.findOneAndUpdate({ _id: user.id }, { name: name, phone: phone, photo: photo })
+            const ret = await userModel.findOne({ _id: user.id });
+            res.status(201).json({
+                meg: "updated successfully",
+                isError: false,
+                data: ret
+            });
+        }
+
+    } catch (error) {
+        return next(createError(405, 'server maintenance now please try again later'))
+
     }
 
 
@@ -187,93 +202,110 @@ module.exports.updateUser = async (req, res, next) => {
 
 }
 module.exports.signin = async (req, res, next) => {
-    const { username, password } = req.body
 
-    const user = await userModel.findOne({ username })
-    if (!user) {
-        return next(createError(201, 'user not found'))
+    try {
+        const { username, password } = req.body
+
+        const user = await userModel.findOne({ username })
+        if (!user) {
+            return next(createError(201, 'user not found'))
+        }
+        else {
+            bcrypt.compare(password, user.password, async function (err, result) {
+
+
+                if (result) {
+                    var token = jwt.sign({ id: user._id, name: user.name, email: user.email, role: user.role }, 'anas');
+                    res.status(202).json({
+                        meg: "success",
+                        isError: false,
+                        token: token,
+                        data: user
+                    })
+                }
+                else {
+                    return next(createError(201, 'wrong user or password'))
+
+                }
+            });
+        }
+    } catch (error) {
+        return next(createError(405, 'server maintenance now please try again later'))
+
     }
-    else {
-        bcrypt.compare(password, user.password, async function (err, result) {
 
-
-            if (result) {
-                var token = jwt.sign({ id: user._id, name: user.name, email: user.email, role: user.role }, 'anas');
-                res.status(202).json({
-                    meg: "success",
-                    isError: false,
-                    token: token,
-                    data: user
-                })
-            }
-            else {
-                return next(createError(201, 'wrong user or password'))
-
-            }
-        });
-    }
 }
 
 module.exports.addrating = async (req, res, next) => {
 
-    const { rate, complainDes, ticketId } = req.body;
-    userId = req.userId
-    userName = req.userName
-    // noti for the admin if complainDes
+    try {
+        const { rate, complainDes, ticketId } = req.body;
+        userId = req.userId
+        userName = req.userName
+        // noti for the admin if complainDes
 
-  
-   
+        let user = await userModel.findOne({ _id: userId });
+        let newRate = user.rate + rate;
+        let newCount = user.countRate + 1;
+        await userModel.findOneAndUpdate({ _id: userId }, { rate: newRate, countRate: newCount });
+        user = await userModel.findOne({ _id: userId });
+        const myTicket = await ticketsModel.findOne({ _id: ticketId });
+        const stuff = await userModel.findOne({ _id: myTicket.workBy })
 
+        if (complainDes.length > 1) {
 
-    let user = await userModel.findOne({ _id: userId });
-    let newRate = user.rate + rate;
-    let newCount = user.countRate + 1;
-    await userModel.findOneAndUpdate({ _id: userId }, { rate: newRate, countRate: newCount });
-    user = await userModel.findOne({ _id: userId });
-    const myTicket= await ticketsModel.findOne({_id:ticketId});
-    const stuff=await userModel.findOne({_id:myTicket.workBy})
+            const user = await userModel.find({ role: "admin" })
+            for (let i = 0; i < user.length; i++) {
 
-    if (complainDes.length > 1) {
+                await notificationModel.insertMany({ title: "new complain", desc: "You Have New complain", userId: user[i]._id, type: "newOrder", state: "normal", Data: "" });
 
-        const user = await userModel.find({ role: "admin" })
-        for (let i = 0; i < user.length; i++) {
-         
-          await notificationModel.insertMany({ title: "new complain", desc: "You Have New complain", userId: user[i]._id ,type:"newOrder",state:"normal",Data:""});
-         
-          if (user[i].fcmToken) {
-            console.log(user[i].fcmToken);
-           
-            const data = await pushNotificationsBytoken(user[i].fcmToken, "new order", "You Have New Compounent order","")
-          }
+                if (user[i].fcmToken) {
+                    console.log(user[i].fcmToken);
+
+                    const data = await pushNotificationsBytoken(user[i].fcmToken, "new order", "You Have New Compounent order", "")
+                }
+            }
+
+            const complain = await complainsModel.findOne({ ticketId: ticketId });
+            if (complain) {
+                await complainsModel.findOneAndUpdate({ ticketId: ticketId }, { clientId: userId, stuffId: stuff._id, stuffName: stuff.name, clientName: userName, clientDesc: complainDes });
+                const com1 = await complainsModel.findOne({ ticketId: ticketId });
+                //console.log(2,com1)
+            }
+            else {
+                const com2 = await complainsModel.insertMany({ clientId: userId, stuffId: stuff._id, stuffName: stuff.name, clientName: userName, clientDesc: complainDes });
+                //console.log(1,com2)
+            }
         }
 
-        const complain = await complainsModel.findOne({ ticketId: ticketId });
-        if (complain) {
-            await complainsModel.findOneAndUpdate({ ticketId: ticketId }, { clientId: userId,stuffId:stuff._id,stuffName:stuff.name, clientName: userName, clientDesc: complainDes });
-            const com1 = await complainsModel.findOne({ ticketId: ticketId });
-            //console.log(2,com1)
-        }
-        else {
-            const com2 = await complainsModel.insertMany({clientId: userId,stuffId:stuff._id,stuffName:stuff.name, clientName: userName, clientDesc: complainDes });
-            //console.log(1,com2)
-        }
+
+        res.status(202).json({
+            meg: "success",
+            isError: false,
+            data: user
+        })
+    } catch (error) {
+        console.log(error.message);
+        return next(createError(405, 'server maintenance now please try again later'))
+
     }
 
-
-    res.status(202).json({
-        meg: "success",
-        isError: false,
-        data: user
-    })
 }
 
 module.exports.getUserRating = async (req, res, next) => {
-    const { userId } = req.header;
-    const userRating = await userModel.findById({ userId }, { countRate });
 
-    res.status(202).json({
-        meg: "your rating",
-        isError: false,
-        data: userRating
-    })
+    try {
+        const { userId } = req.header;
+        const userRating = await userModel.findById({ userId }, { countRate });
+
+        res.status(202).json({
+            meg: "your rating",
+            isError: false,
+            data: userRating
+        })
+    } catch (error) {
+        return next(createError(405, 'server maintenance now please try again later'));
+
+    }
+
 }
