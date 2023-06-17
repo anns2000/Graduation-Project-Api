@@ -259,11 +259,11 @@ module.exports.addrating = async (req, res, next) => {
 
             const user = await userModel.find({ role: "admin" })
             for (let i = 0; i < user.length; i++) {
-                await notificationModel.insertMany({ title: "new complain", desc: "You Have New complain", userId: user[i]._id, type: "newOrder", state: "normal", Data: "" });
+                await notificationModel.insertMany({ title: "new complain", desc: "You Have New complain", userId: user[i]._id, type: "newComplain", state: "normal", Data: "" });
                 if (user[i].fcmToken) {
                     console.log(user[i].fcmToken);
 
-                    const data = await pushNotificationsBytoken(user[i].fcmToken, "new order", "You Have New Compounent order", "")
+                    const data = await pushNotificationsBytoken(user[i].fcmToken, "new Complain", "You Have New Complain", "")
                 }
             }
 
